@@ -1,4 +1,73 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.3">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2018-08-30T19:36:18+08:00</updated><id>http://localhost:4000/</id><title type="html">Mengman的异想世界</title><subtitle>Program 4 Fun/n Program 4 Life</subtitle><entry><title type="html">Welcome to Mengman Home!</title><link href="http://localhost:4000/jekyll/update/2018/07/31/welcome-to-jekyll.html" rel="alternate" type="text/html" title="Welcome to Mengman Home!" /><published>2018-07-31T17:26:21+08:00</published><updated>2018-07-31T17:26:21+08:00</updated><id>http://localhost:4000/jekyll/update/2018/07/31/welcome-to-jekyll</id><content type="html" xml:base="http://localhost:4000/jekyll/update/2018/07/31/welcome-to-jekyll.html">&lt;p&gt;You’ll find this post in your &lt;code class=&quot;highlighter-rouge&quot;&gt;_posts&lt;/code&gt; directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run &lt;code class=&quot;highlighter-rouge&quot;&gt;jekyll serve&lt;/code&gt;, which launches a web server and auto-regenerates your site when a file is updated.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.5">Jekyll</generator><link href="https://mengman.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://mengman.github.io/" rel="alternate" type="text/html" /><updated>2019-05-15T01:28:01+08:00</updated><id>https://mengman.github.io/</id><title type="html">Mengman的异想世界</title><subtitle>Program 4 Fun/n Program 4 Life</subtitle><entry><title type="html">Softmax Cross Entropy Loss笔记</title><link href="https://mengman.github.io/machinelearning/deeplearning/math/2019/02/22/softmax-cross-entropy-loss.html" rel="alternate" type="text/html" title="Softmax Cross Entropy Loss笔记" /><published>2019-02-22T17:26:21+08:00</published><updated>2019-02-22T17:26:21+08:00</updated><id>https://mengman.github.io/machinelearning/deeplearning/math/2019/02/22/softmax-cross-entropy-loss</id><content type="html" xml:base="https://mengman.github.io/machinelearning/deeplearning/math/2019/02/22/softmax-cross-entropy-loss.html">&lt;h2 id=&quot;softmax函数&quot;&gt;Softmax函数&lt;/h2&gt;
+&lt;p&gt;Softmax函数是在机器学习做分类预测中一个重要的工具函数。Softmax函数的数学定义如下：&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\sigma(z)_j = \frac{e^{z_j}}{\sum_{k=1}^Ne^{z_k}} 
+\text{ for }j = 1, ..., N  \text{ and } \mathbf{z} = (z_1, z_2, ..., z_k)&lt;/script&gt;
+
+&lt;p&gt;如果用神经网络做一个分类手写数字预测，那么神经网络的最后一层有10个输出，分别作为预测为 0 ~ 9 的概率。那么怎么判断预测结果到底是哪个数字呢？ 一个简单的方法是找到10个输出里最大的那个作为预测结果。 但是这10个输出是相互独立的，其和不等于1。所以一个更好的办法是将所有的输出的和缩放到1，然后看每个输出占的比重，将这个值作为预测概率，而 Softmax 函数恰好可以做到这一点。对于分类  i  的预测概率为  &lt;script type=&quot;math/tex&quot;&gt;p_i =\sigma(z)_i&lt;/script&gt;&lt;/p&gt;
+
+&lt;p&gt;Softmax 函数非常好实现，下面是用 numpy 实现的 Softmax&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;softmax&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;exps&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;exp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;exps&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;exps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;在实现 Softmax 函数的时候，由于涉及到指数运算，在输出比较大的时候，非常容易造成结果溢出。
+为了使得 softmax 函数在数值上更加稳定，我们可以先对 $\mathbf{z}$ 进行 normalization 。 Normalization 除了统计学上的&lt;code class=&quot;highlighter-rouge&quot;&gt;标准分&lt;/code&gt;( &lt;script type=&quot;math/tex&quot;&gt;\frac{\mathbf{X} - \mu}{\sigma}&lt;/script&gt; ) , 机器学习中还常用三种其他的方法： L1, L2 和 max&lt;/p&gt;
+
+&lt;p&gt;L1:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\frac{\mathbf{z}}{\sum_{i=1}^n{\vert z_i \vert }}&lt;/script&gt;
+
+&lt;p&gt;L2:  &lt;script type=&quot;math/tex&quot;&gt;\frac{\mathbf{z}}{\sqrt{\sum_{i=1}^n{z_i^2}}}&lt;/script&gt;&lt;/p&gt;
+
+&lt;p&gt;max: &lt;script type=&quot;math/tex&quot;&gt;\frac{\mathbf{z}}{\max{\mathbf{z}}}&lt;/script&gt;&lt;/p&gt;
+
+&lt;p&gt;于是可以把上面的代码改写为&lt;/p&gt;
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;stable_softmax&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;exps&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;exp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;X&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;max&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;exps&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;exps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;softmax-求导&quot;&gt;Softmax 求导&lt;/h2&gt;
+&lt;p&gt;由于 softmax 的良好性质，在用神经网络做分类任务时，通常直接将最后一层设置为 softmax, 这个时候就要考虑如何对 softmax 进行求导。神经网络输出 $\mathbf{z}$ 长度为 k ，那么要对这个 k 个输出进行求偏导。&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\frac{\partial\sigma(\mathbf{z})}{\partial\mathbf{z}} = 
+  \begin{bmatrix}
+      \frac{\partial\sigma(z)_0}{\partial z_0} &amp; \frac{\partial\sigma(z)_1}{\partial z_0} &amp; ... &amp; \frac{\partial\sigma(z)_N}{\partial z_0} \\
+      \frac{\partial\sigma(z)_0}{\partial z_1} &amp; \frac{\partial\sigma(z)_1}{\partial z_1} &amp; ... &amp; \frac{\partial\sigma(z)_N}{\partial z_1} \\
+      ... \\
+      \frac{\partial\sigma(z)_0}{\partial z_N} &amp; \frac{\partial\sigma(z)_1}{\partial z_N} &amp; ... &amp; \frac{\partial\sigma(z)_N}{\partial z_N} \\
+  \end{bmatrix} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;对于矩阵中的元素  &lt;script type=&quot;math/tex&quot;&gt;\frac{\partial\sigma(z)_i}{\partial z_j}&lt;/script&gt; ， 如果  &lt;script type=&quot;math/tex&quot;&gt;i \neq j&lt;/script&gt;  :&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{aligned} \frac{\partial\frac{e^{z_i}}{\sum_{k=1}^Ne^{z_k}} }{\partial z^j} &amp; = \frac{0 - e^{z_i} e^{z_j}}{ (\sum_{k=1}^Ne^{z_k})^2 } \\
+&amp; = \frac{-e^{z_i}}{\sum_{k=1}^Ne^{z_k}} \times \frac{e^{z_j}}{\sum_{k=1}^Ne^{z_k}} \\
+&amp; = -p_i \times p_j\end{aligned} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;如果 i = j :&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{aligned}\frac{\partial\frac{e^{z_i}}{\sum_{k=1}^Ne^{z_k}} }{\partial z^i} &amp;= \frac{ e^{z_i} }{ \sum_{k=1}^Ne^{z_k} } - \frac{ e^{2z_i} }{ (\sum_{k=1}^Ne^{z_k})^2 } \\
+&amp; = \frac{ e^{z_i} (\sum_{k=1}^Ne^k - e^{z_i}) }{ (\sum_{k=1}^Ne^{z_k})^2 } \\
+&amp; = p_i (1-p_i)
+\end{aligned} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;求导矩阵可以改写为：&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\frac{\partial\sigma(\mathbf{z})}{\partial\mathbf{z}} = 
+  \begin{bmatrix}
+      p_0(1-p_0) &amp; -p_1 \times p_0 &amp; ... &amp; - p_N * p_0 \\
+      -p_0 \times p_1 &amp; p_1(1-p_1) &amp; ... &amp; - p_N * p_1 \\
+      ... \\
+      -p_0 \times p_N &amp; -p_1 \times p_N &amp; ... &amp;  p_N(1-p_N) \\
+\end{bmatrix} %]]&gt;&lt;/script&gt;
+
+&lt;h2 id=&quot;交叉熵&quot;&gt;交叉熵&lt;/h2&gt;</content><author><name></name></author><summary type="html">Softmax函数 Softmax函数是在机器学习做分类预测中一个重要的工具函数。Softmax函数的数学定义如下： 如果用神经网络做一个分类手写数字预测，那么神经网络的最后一层有10个输出，分别作为预测为 0 ~ 9 的概率。那么怎么判断预测结果到底是哪个数字呢？ 一个简单的方法是找到10个输出里最大的那个作为预测结果。 但是这10个输出是相互独立的，其和不等于1。所以一个更好的办法是将所有的输出的和缩放到1，然后看每个输出占的比重，将这个值作为预测概率，而 Softmax 函数恰好可以做到这一点。对于分类 i 的预测概率为 Softmax 函数非常好实现，下面是用 numpy 实现的 Softmax def softmax(X): exps = np.exp(X) return exps / np.sum(exps) 在实现 Softmax 函数的时候，由于涉及到指数运算，在输出比较大的时候，非常容易造成结果溢出。 为了使得 softmax 函数在数值上更加稳定，我们可以先对 $\mathbf{z}$ 进行 normalization 。 Normalization 除了统计学上的标准分( ) , 机器学习中还常用三种其他的方法： L1, L2 和 max L1: L2: max: 于是可以把上面的代码改写为 def stable_softmax(X): exps = np.exp(X - np.max(X)) return exps / np.sum(exps) Softmax 求导 由于 softmax 的良好性质，在用神经网络做分类任务时，通常直接将最后一层设置为 softmax, 这个时候就要考虑如何对 softmax 进行求导。神经网络输出 $\mathbf{z}$ 长度为 k ，那么要对这个 k 个输出进行求偏导。 对于矩阵中的元素 ， 如果 : 如果 i = j : 求导矩阵可以改写为： 交叉熵</summary></entry><entry><title type="html">Welcome to Mengman Home!</title><link href="https://mengman.github.io/jekyll/update/2018/07/31/welcome-to-jekyll.html" rel="alternate" type="text/html" title="Welcome to Mengman Home!" /><published>2018-07-31T17:26:21+08:00</published><updated>2018-07-31T17:26:21+08:00</updated><id>https://mengman.github.io/jekyll/update/2018/07/31/welcome-to-jekyll</id><content type="html" xml:base="https://mengman.github.io/jekyll/update/2018/07/31/welcome-to-jekyll.html">&lt;p&gt;You’ll find this post in your &lt;code class=&quot;highlighter-rouge&quot;&gt;_posts&lt;/code&gt; directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run &lt;code class=&quot;highlighter-rouge&quot;&gt;jekyll serve&lt;/code&gt;, which launches a web server and auto-regenerates your site when a file is updated.&lt;/p&gt;
 
 &lt;p&gt;To add new posts, simply add a file in the &lt;code class=&quot;highlighter-rouge&quot;&gt;_posts&lt;/code&gt; directory that follows the convention &lt;code class=&quot;highlighter-rouge&quot;&gt;YYYY-MM-DD-name-of-post.ext&lt;/code&gt; and includes the necessary front matter. Take a look at the source for this post to get an idea about how it works.&lt;/p&gt;
 
@@ -13,4 +82,4 @@
 &lt;span class=&quot;n&quot;&gt;print_hi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'Tom'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 &lt;span class=&quot;c1&quot;&gt;#=&amp;gt; prints 'Hi, Tom' to STDOUT.&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
-&lt;p&gt;Check out the &lt;a href=&quot;https://jekyllrb.com/docs/home&quot;&gt;Jekyll docs&lt;/a&gt; for more info on how to get the most out of Jekyll. File all bugs/feature requests at &lt;a href=&quot;https://github.com/jekyll/jekyll&quot;&gt;Jekyll’s GitHub repo&lt;/a&gt;. If you have questions, you can ask them on &lt;a href=&quot;https://talk.jekyllrb.com/&quot;&gt;Jekyll Talk&lt;/a&gt;.&lt;/p&gt;</content><author><name></name></author><summary type="html">You’ll find this post in your _posts directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run jekyll serve, which launches a web server and auto-regenerates your site when a file is updated.</summary></entry></feed>
+&lt;p&gt;Check out the &lt;a href=&quot;https://jekyllrb.com/docs/home&quot;&gt;Jekyll docs&lt;/a&gt; for more info on how to get the most out of Jekyll. File all bugs/feature requests at &lt;a href=&quot;https://github.com/jekyll/jekyll&quot;&gt;Jekyll’s GitHub repo&lt;/a&gt;. If you have questions, you can ask them on &lt;a href=&quot;https://talk.jekyllrb.com/&quot;&gt;Jekyll Talk&lt;/a&gt;.&lt;/p&gt;</content><author><name></name></author><summary type="html">You’ll find this post in your _posts directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run jekyll serve, which launches a web server and auto-regenerates your site when a file is updated. To add new posts, simply add a file in the _posts directory that follows the convention YYYY-MM-DD-name-of-post.ext and includes the necessary front matter. Take a look at the source for this post to get an idea about how it works. Here is an example of math expression Jekyll also offers powerful support for code snippets: def print_hi(name) puts &quot;Hi, #{name}&quot; end print_hi('Tom') #=&amp;gt; prints 'Hi, Tom' to STDOUT. Check out the Jekyll docs for more info on how to get the most out of Jekyll. File all bugs/feature requests at Jekyll’s GitHub repo. If you have questions, you can ask them on Jekyll Talk.</summary></entry></feed>
