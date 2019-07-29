@@ -27,5 +27,5 @@ categories: machinelearning deeplearning math
 
 ### 大 batch size 的缺点
 
-大 batch size 的泛化能力差是因为，它倾向收敛在 sharp minima 处。 极小值的 sharpness 是由 $\nabla ^2 f(x) $ 正特征值的大小来决定的，特征值越大，极小值就越 sharp， 泛化能力也就越差。
+大 batch size 的泛化能力差是因为，它倾向收敛在 sharp minima 处。 极小值的 sharpness 是由 $$ \nabla ^2 f(x) $$ 正特征值的大小来决定的，特征值越大，极小值就越 sharp， 泛化能力也就越差。
 
