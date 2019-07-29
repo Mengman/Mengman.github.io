@@ -1,8 +1,11 @@
 ---
 layout: post
-title:  "Softmax Cross Entropy Loss笔记"
-date:   2019-02-22 17:26:21 +0800
+title: Softmax Cross Entropy Loss笔记
+date: '2019-02-22 17:26:21 +0800'
 categories: machinelearning deeplearning math
+created: '2019-07-10T05:02:46.731Z'
+modified: '2019-07-10T05:02:46.731Z'
+tags: [Import-e2cb]
 ---
 
 ## Softmax函数
