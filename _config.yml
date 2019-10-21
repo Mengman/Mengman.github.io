@@ -28,6 +28,12 @@ theme: minima
 
 plugins:
   - jekyll-feed
+plugins_dir: ./_plugins
+
+jekyll_get:
+  - data: github
+    json: 'https://api.github.com/users/Mengman/repos'
+    cache: false
 
 timezone: Asia/Shanghai
 # Exclude from processing.
