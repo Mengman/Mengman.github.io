@@ -42,3 +42,4 @@ timezone: Asia/Shanghai
 #   - vendor/gems/
 #   - vendor/ruby/
 
+exclude: [vendor]
