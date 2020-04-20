@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="https://mengman.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://mengman.github.io/" rel="alternate" type="text/html" /><updated>2020-04-20T20:12:28+08:00</updated><id>https://mengman.github.io/feed.xml</id><title type="html">Mengman的异想世界</title><subtitle>Program 4 Fun/n Program 4 Life</subtitle><entry><title type="html">软件设计模型-功能开关</title><link href="https://mengman.github.io/designpattern/softwareengineering/2020/04/20/Feature-Toggles.html" rel="alternate" type="text/html" title="软件设计模型-功能开关" /><published>2020-04-20T17:26:21+08:00</published><updated>2020-04-20T17:26:21+08:00</updated><id>https://mengman.github.io/designpattern/softwareengineering/2020/04/20/Feature-Toggles</id><content type="html" xml:base="https://mengman.github.io/designpattern/softwareengineering/2020/04/20/Feature-Toggles.html">&lt;h2 id=&quot;功能开关&quot;&gt;功能开关&lt;/h2&gt;
-&lt;p&gt;本文受到 Pete Hodgson 的文章 &lt;a href=&quot;https://www.martinfowler.com/articles/feature-toggles.html&quot;&gt;Feature Toggles (aka Feature Flags)&lt;/a&gt; 的启发，原文比内容比本文更加丰富。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="https://mengman.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://mengman.github.io/" rel="alternate" type="text/html" /><updated>2020-04-20T20:23:29+08:00</updated><id>https://mengman.github.io/feed.xml</id><title type="html">Mengman的异想世界</title><subtitle>Program 4 Fun/n Program 4 Life</subtitle><entry><title type="html">软件设计模型-功能开关</title><link href="https://mengman.github.io/designpattern/softwareengineering/2020/04/20/Feature-Toggles.html" rel="alternate" type="text/html" title="软件设计模型-功能开关" /><published>2020-04-20T17:26:21+08:00</published><updated>2020-04-20T17:26:21+08:00</updated><id>https://mengman.github.io/designpattern/softwareengineering/2020/04/20/Feature-Toggles</id><content type="html" xml:base="https://mengman.github.io/designpattern/softwareengineering/2020/04/20/Feature-Toggles.html">&lt;h2 id=&quot;功能开关&quot;&gt;功能开关&lt;/h2&gt;
+&lt;p&gt;本文受到 Pete Hodgson 的文章 &lt;a href=&quot;https://www.martinfowler.com/articles/feature-toggles.html&quot;&gt;Feature Toggles (aka Feature Flags)&lt;/a&gt; 启发，原文内容比本文更加丰富。&lt;/p&gt;
 
 &lt;h3 id=&quot;简单的功能开关&quot;&gt;简单的功能开关&lt;/h3&gt;
 
@@ -11,7 +11,7 @@
 
 &lt;div class=&quot;language-go highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;doSomeThing&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
     &lt;span class=&quot;n&quot;&gt;useNewAlgorithm&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;false&lt;/span&gt;
-    &lt;span class=&quot;c&quot;&gt;// useNewAlgorithm := true // uncomment if you working with new algorithm     &lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;// useNewAlgorithm := true // uncomment if you working with new algorithm&lt;/span&gt;
     &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;useNewAlgoritem&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
         &lt;span class=&quot;n&quot;&gt;doSomeThingNew&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
     &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
@@ -29,7 +29,7 @@
 
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;我们把新的功能写到 &lt;code&gt;doSomeThingNew&lt;/code&gt; 函数中，并通过 &lt;code&gt;useNewAlgorithm&lt;/code&gt; 变量来控制是否调用新功能。这个方法虽然简单，但是我们无法动态的，或者在运行时去决定是否启用新的功能。为了实现对于新功能的动态控制，我们可以引入一个&lt;strong&gt;开关路由器&lt;/strong&gt;（toggle router）来实现。&lt;/p&gt;
+&lt;p&gt;我们把新的功能写到 &lt;code&gt;doSomeThingNew&lt;/code&gt; 函数中，并通过 &lt;code&gt;useNewAlgorithm&lt;/code&gt; 变量来控制是否调用新功能。这个方法虽然简单，但是我们无法在运行时动态的去决定是否启用新的功能。为了实现对于新功能的动态控制，我们可以引入一个&lt;strong&gt;开关路由器&lt;/strong&gt;（toggle router）来实现。&lt;/p&gt;
 
 &lt;h3 id=&quot;开关路由器&quot;&gt;开关路由器&lt;/h3&gt;
 
@@ -97,7 +97,7 @@
 
 &lt;h3 id=&quot;解耦开关点与开关路由器&quot;&gt;解耦开关点与开关路由器&lt;/h3&gt;
 
-&lt;p&gt;幸好&lt;a href=&quot;https://en.wikipedia.org/wiki/Fundamental_theorem_of_software_engineering&quot;&gt;“软件中的任何问题都可以通过引入一个间接层来解决”&lt;/a&gt;  , 通过增加一个&lt;strong&gt;开关逻辑判断层&lt;/strong&gt;我们可以解耦开关点与开关判断逻辑。&lt;/p&gt;
+&lt;p&gt;幸好&lt;a href=&quot;https://en.wikipedia.org/wiki/Fundamental_theorem_of_software_engineering&quot;&gt;“软件中的任何问题都可以通过引入一个间接层来解决”&lt;/a&gt;, 通过增加一个&lt;strong&gt;开关逻辑判断层&lt;/strong&gt;我们可以解耦开关点与开关判断逻辑。&lt;/p&gt;
 
 &lt;div class=&quot;language-go highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;type&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FeatureDecisions&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
     &lt;span class=&quot;n&quot;&gt;toggle&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ToggleRouter&lt;/span&gt;
@@ -134,11 +134,11 @@
 
 &lt;h3 id=&quot;判断翻转inversion-of-decision&quot;&gt;判断翻转(Inversion of Decision)&lt;/h3&gt;
 
-&lt;p&gt;虽然在上一步中，我们通过添加&lt;strong&gt;判断逻辑层&lt;/strong&gt;实现了判断逻辑与开关点的解耦，但是 &lt;code&gt;InvoiceEmailler&lt;/code&gt;  依旧与  &lt;code&gt;FeatureDecisions&lt;/code&gt;  耦合在一起，在执行 &lt;code&gt;GenerateInvoiceEmail()&lt;/code&gt; 需要先创建或者获取  &lt;code&gt;FeatureDecisions&lt;/code&gt; ，这处代码“坏味道”带来了两个缺点：&lt;/p&gt;
+&lt;p&gt;虽然在上一步中，我们通过添加&lt;strong&gt;判断逻辑层&lt;/strong&gt;实现了判断逻辑与开关点的解耦，但是 &lt;code&gt;InvoiceEmailler&lt;/code&gt; 依旧与 &lt;code&gt;FeatureDecisions&lt;/code&gt; 耦合在一起，在执行 &lt;code&gt;GenerateInvoiceEmail()&lt;/code&gt; 需要先创建或者获取 &lt;code&gt;FeatureDecisions&lt;/code&gt; ，这处代码“坏味道”带来了两个问题：&lt;/p&gt;
 
 &lt;ol&gt;
-  &lt;li&gt;它不方便对于代码进行测试，在测试 &lt;code&gt;GenerateInvoiceEmail()&lt;/code&gt; 函数之前，我们必须先设置好调用 &lt;code&gt;GetFeatureToggleRouter()&lt;/code&gt; 与 &lt;code&gt;NewFeatureDecision()&lt;/code&gt; 函数的环境。&lt;/li&gt;
-  &lt;li&gt;随着项目功能模块的增多，每个模块都与 &lt;code&gt;FeatureDecisions&lt;/code&gt;  模块发生了耦合，使得该模块变成了全局依赖模块。&lt;/li&gt;
+  &lt;li&gt;它不方便对代码进行测试，在测试 &lt;code&gt;GenerateInvoiceEmail()&lt;/code&gt; 函数之前，我们必须先设置好调用 &lt;code&gt;GetFeatureToggleRouter()&lt;/code&gt; 与 &lt;code&gt;NewFeatureDecision()&lt;/code&gt; 函数的环境，才能确保可以到达待测试逻辑代码块。&lt;/li&gt;
+  &lt;li&gt;随着项目功能模块的增多，每个模块都与 &lt;code&gt;FeatureDecisions&lt;/code&gt; 模块发生了耦合，使得该模块变成了全局依赖模块。&lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;div class=&quot;language-go highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;// invoice_emailler.go&lt;/span&gt;
@@ -175,7 +175,7 @@
 
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;此处“坏味道”的根本原因是业务模块对  &lt;code&gt;FeatureDecisions&lt;/code&gt;  模块的依赖，通过&lt;strong&gt;控制反转&lt;/strong&gt; 在 &lt;code&gt;InvoiceEmailler&lt;/code&gt; 模块创建时，将 &lt;code&gt;FeatureDecisions&lt;/code&gt;  注入到  &lt;code&gt;InvoiceEmailler&lt;/code&gt;  中，就可以消除业务模块对与  &lt;code&gt;FeatureDecisions&lt;/code&gt;  模块的依赖。&lt;/p&gt;
+&lt;p&gt;此处“坏味道”的根本原因是业务模块对 &lt;code&gt;FeatureDecisions&lt;/code&gt; 模块的依赖，通过&lt;strong&gt;控制反转&lt;/strong&gt;在 &lt;code&gt;InvoiceEmailler&lt;/code&gt; 模块创建时，将 &lt;code&gt;FeatureDecisions&lt;/code&gt; 注入到 &lt;code&gt;InvoiceEmailler&lt;/code&gt; 中，就可以消除业务模块对与 &lt;code&gt;FeatureDecisions&lt;/code&gt; 模块的依赖。&lt;/p&gt;
 
 &lt;h3 id=&quot;消除条件判断&quot;&gt;消除条件判断&lt;/h3&gt;
 
@@ -264,7 +264,7 @@
 
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;到现在我们就差不多完成了对于代码的优化。&lt;/p&gt;</content><author><name></name></author><summary type="html">功能开关 本文受到 Pete Hodgson 的文章 Feature Toggles (aka Feature Flags) 的启发，原文比内容比本文更加丰富。</summary></entry><entry><title type="html">Large Kernel Matters - Improve Semantic Segmentation by Global Convolutional Network</title><link href="https://mengman.github.io/machinelearning/deeplearning/math/2019/07/29/Large-Kernel-Matters-Improve-Semantic-Segmentation-by-Global-Convolutional-Network.html" rel="alternate" type="text/html" title="Large Kernel Matters - Improve Semantic Segmentation by Global Convolutional Network" /><published>2019-07-29T17:26:21+08:00</published><updated>2019-07-29T17:26:21+08:00</updated><id>https://mengman.github.io/machinelearning/deeplearning/math/2019/07/29/Large-Kernel-Matters-Improve-Semantic-Segmentation-by-Global-Convolutional-Network</id><content type="html" xml:base="https://mengman.github.io/machinelearning/deeplearning/math/2019/07/29/Large-Kernel-Matters-Improve-Semantic-Segmentation-by-Global-Convolutional-Network.html">&lt;p&gt;&lt;strong&gt;论文题目:&lt;/strong&gt; Large Kernel Matters - Improve Semantic Segmentation by Global Convolutional Network&lt;/p&gt;
+&lt;p&gt;到现在我们就差不多完成了对于代码的优化。&lt;/p&gt;</content><author><name></name></author><summary type="html">功能开关 本文受到 Pete Hodgson 的文章 Feature Toggles (aka Feature Flags) 启发，原文内容比本文更加丰富。</summary></entry><entry><title type="html">Large Kernel Matters - Improve Semantic Segmentation by Global Convolutional Network</title><link href="https://mengman.github.io/machinelearning/deeplearning/math/2019/07/29/Large-Kernel-Matters-Improve-Semantic-Segmentation-by-Global-Convolutional-Network.html" rel="alternate" type="text/html" title="Large Kernel Matters - Improve Semantic Segmentation by Global Convolutional Network" /><published>2019-07-29T17:26:21+08:00</published><updated>2019-07-29T17:26:21+08:00</updated><id>https://mengman.github.io/machinelearning/deeplearning/math/2019/07/29/Large-Kernel-Matters-Improve-Semantic-Segmentation-by-Global-Convolutional-Network</id><content type="html" xml:base="https://mengman.github.io/machinelearning/deeplearning/math/2019/07/29/Large-Kernel-Matters-Improve-Semantic-Segmentation-by-Global-Convolutional-Network.html">&lt;p&gt;&lt;strong&gt;论文题目:&lt;/strong&gt; Large Kernel Matters - Improve Semantic Segmentation by Global Convolutional Network&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;论文内容:&lt;/strong&gt; 使用全局卷积网络(GCN)解决分割模型中分类与分割任务冲突的问题，使用Boundary Refinement block 提升物体边缘的分割能力。&lt;/p&gt;
 
