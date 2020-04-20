@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>软件设计模型-功能开关 | Mengman的异想世界</title>
+<meta name="generator" content="Jekyll v3.8.6" />
+<meta property="og:title" content="软件设计模型-功能开关" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="功能开关 本文受到 Pete Hodgson 的文章 Feature Toggles (aka Feature Flags) 的启发，原文比内容比本文更加丰富。" />
+<meta property="og:description" content="功能开关 本文受到 Pete Hodgson 的文章 Feature Toggles (aka Feature Flags) 的启发，原文比内容比本文更加丰富。" />
+<link rel="canonical" href="https://mengman.github.io/designpattern/softwareengineering/2020/04/20/Feature-Toggles.html" />
+<meta property="og:url" content="https://mengman.github.io/designpattern/softwareengineering/2020/04/20/Feature-Toggles.html" />
+<meta property="og:site_name" content="Mengman的异想世界" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-04-20T17:26:21+08:00" />
+<script type="application/ld+json">
+{"description":"功能开关 本文受到 Pete Hodgson 的文章 Feature Toggles (aka Feature Flags) 的启发，原文比内容比本文更加丰富。","@type":"BlogPosting","headline":"软件设计模型-功能开关","dateModified":"2020-04-20T17:26:21+08:00","url":"https://mengman.github.io/designpattern/softwareengineering/2020/04/20/Feature-Toggles.html","datePublished":"2020-04-20T17:26:21+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://mengman.github.io/designpattern/softwareengineering/2020/04/20/Feature-Toggles.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="assets/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://mengman.github.io/feed.xml" title="Mengman的异想世界" /></head><body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Mengman的异想世界</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">软件设计模型-功能开关</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2020-04-20T17:26:21+08:00" itemprop="datePublished">Apr 20, 2020
+      </time></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <h2 id="功能开关">功能开关</h2>
+<p>本文受到 Pete Hodgson 的文章 <a href="https://www.martinfowler.com/articles/feature-toggles.html">Feature Toggles (aka Feature Flags)</a> 的启发，原文比内容比本文更加丰富。</p>
+
+<h3 id="简单的功能开关">简单的功能开关</h3>
+
+<p>场景一：你刚刚开发完一个新的功能，然后需求告诉你，由于这个功能使用场景的限制，需要添加一个开关，能够让这个功能在某些环境打开或者关闭。</p>
+
+<p>场景二：你实现了一个新版本的算法，但是并不希望立刻在线上启用，希望能进行更多的测试，所以需要添加一个开关，在测试环境打开，在生产环境保持关闭。</p>
+
+<p>这个时候你只需要实现一个简单的功能开关即可。</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="n">doSomeThing</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">useNewAlgorithm</span> <span class="o">:=</span> <span class="no">false</span>
+    <span class="c">// useNewAlgorithm := true // uncomment if you working with new algorithm     </span>
+    <span class="k">if</span> <span class="n">useNewAlgoritem</span> <span class="p">{</span>
+        <span class="n">doSomeThingNew</span><span class="p">()</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="n">doSomeThingOld</span><span class="p">()</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="n">doSomeThingNew</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c">// implement something new</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="n">doSomeThingOld</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c">// implement something old</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+
+<p>我们把新的功能写到 <code>doSomeThingNew</code> 函数中，并通过 <code>useNewAlgorithm</code> 变量来控制是否调用新功能。这个方法虽然简单，但是我们无法动态的，或者在运行时去决定是否启用新的功能。为了实现对于新功能的动态控制，我们可以引入一个<strong>开关路由器</strong>（toggle router）来实现。</p>
+
+<h3 id="开关路由器">开关路由器</h3>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">ToggleRouter</span> <span class="k">struct</span> <span class="p">{</span>
+	<span class="n">featureConfig</span> <span class="k">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="k">struct</span><span class="p">{}</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="p">(</span><span class="n">tr</span> <span class="o">*</span><span class="n">ToggleRouter</span><span class="p">)</span> <span class="n">SetFeature</span><span class="p">(</span><span class="n">featureName</span> <span class="kt">string</span><span class="p">,</span> <span class="n">isEnabled</span> <span class="kt">bool</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">if</span> <span class="n">isEnabled</span> <span class="p">{</span>
+		<span class="n">tr</span><span class="o">.</span><span class="n">featureConfig</span><span class="p">[</span><span class="n">featureName</span><span class="p">]</span> <span class="o">=</span> <span class="k">struct</span><span class="p">{}{}</span>
+	<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+		<span class="nb">delete</span><span class="p">(</span><span class="n">tr</span><span class="o">.</span><span class="n">featureConfig</span><span class="p">,</span> <span class="n">featureName</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="p">(</span><span class="n">tr</span> <span class="o">*</span><span class="n">ToggleRouter</span><span class="p">)</span> <span class="n">IsFeatureEnabled</span><span class="p">(</span><span class="n">featureName</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+	<span class="n">_</span><span class="p">,</span> <span class="n">ok</span> <span class="o">:=</span> <span class="n">tr</span><span class="o">.</span><span class="n">featureConfig</span><span class="p">[</span><span class="n">featureName</span><span class="p">]</span>
+	<span class="k">return</span> <span class="n">ok</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="n">NewToggleRouter</span><span class="p">(</span><span class="n">features</span> <span class="p">[]</span><span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="n">tr</span> <span class="o">*</span><span class="n">ToggleRouter</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">tr</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">ToggleRouter</span><span class="p">{</span>
+		<span class="n">featureConfig</span><span class="o">:</span> <span class="nb">make</span><span class="p">(</span><span class="k">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="k">struct</span><span class="p">{}),</span>
+	<span class="p">}</span>
+
+	<span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">feat</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">features</span> <span class="p">{</span>
+		<span class="n">tr</span><span class="o">.</span><span class="n">SetFeature</span><span class="p">(</span><span class="n">feat</span><span class="p">,</span> <span class="no">true</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="k">return</span>
+<span class="p">}</span>
+
+<span class="k">var</span> <span class="n">toggleRouter</span> <span class="o">=</span> <span class="n">NewToggleRouter</span><span class="p">([]</span><span class="kt">string</span><span class="p">{</span><span class="s">"newAlgo"</span><span class="p">})</span>
+
+<span class="k">func</span> <span class="n">doSomeThing</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="n">toggleRouter</span><span class="o">.</span><span class="n">IsFeatureEnabled</span><span class="p">(</span><span class="s">"newAlgo"</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">doSomeThingNew</span><span class="p">()</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="n">doSomeThingOld</span><span class="p">()</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>通过开关路由器我们可以动态的设置功能的启用与否。ToggleRouter 可以通过配置文件创建，或者通过配置界面，或者 API 接口来进行配置。到现在问题似乎已经解决了，然而随着越来越多的新功能加入，越来越多的功能需要通过开关来配置是否开启，代码中出现了越来越多的<strong>开关点</strong>，代码也变得越来越难以理解和维护。</p>
+
+<p>让我们看一个新例子，<code>InvoiceEmailler</code> 会根据收据发送一封电子邮件，现在我们希望能加上一个新的功能，在邮件中添加退货链接。而这个退货链接只是在特定的情况下才会触发。下面代码中是根据 开关中是否包含 <code>next-gen-ecomm</code> 来判断的。</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">var</span> <span class="n">toggle</span> <span class="o">=</span> <span class="n">GetFeatureToggleRouter</span><span class="p">()</span>
+
+<span class="k">type</span> <span class="n">InvoiceEmailler</span> <span class="k">struct</span> <span class="p">{</span>
+    <span class="n">invoice</span> <span class="n">Invoice</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="p">(</span><span class="n">emailler</span> <span class="o">*</span><span class="n">InvoiceEmailler</span><span class="p">)</span> <span class="n">GenerateInvoiceEmail</span><span class="p">()</span> <span class="n">Email</span> <span class="p">{</span>
+    <span class="n">baseEmail</span> <span class="o">:=</span> <span class="n">buildEmailForInvoice</span><span class="p">(</span><span class="n">emailler</span><span class="o">.</span><span class="n">invoice</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">toggle</span><span class="o">.</span><span class="n">IsFeatureEnabled</span><span class="p">(</span><span class="s">"next-gen-ecomm"</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">addOrderCallationContentToEmail</span><span class="p">(</span><span class="n">baseEmail</span><span class="p">)</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">baseEmail</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>但是，对于一个功能是否启用的判断逻辑可能是十分复杂的，也许在 A 情况下需要开启，在 B 情况下需要关闭；或者需要对某一部分用户开启这一项功能，对另一部分用户关闭这一功能；开关的判断逻辑可能会频繁的迭代。如果要更新判断逻辑，我们不得不在每个开关点去修改判断逻辑。这是代码中的第一个问题：<strong>开关点与开关的判断逻辑耦合在一起</strong>。</p>
+
+<h3 id="解耦开关点与开关路由器">解耦开关点与开关路由器</h3>
+
+<p>幸好<a href="https://en.wikipedia.org/wiki/Fundamental_theorem_of_software_engineering">“软件中的任何问题都可以通过引入一个间接层来解决”</a>  , 通过增加一个<strong>开关逻辑判断层</strong>我们可以解耦开关点与开关判断逻辑。</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">FeatureDecisions</span> <span class="k">struct</span> <span class="p">{</span>
+    <span class="n">toggle</span> <span class="o">*</span><span class="n">ToggleRouter</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="p">(</span><span class="n">descisions</span> <span class="o">*</span><span class="n">FeatureDecisions</span><span class="p">)</span> <span class="n">IncludeOrderCancellationInEmail</span><span class="p">()</span> <span class="kt">bool</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">descisions</span><span class="o">.</span><span class="n">toggle</span><span class="o">.</span><span class="n">IsFeatureEnabled</span><span class="p">(</span><span class="s">"new-gen-ecomm"</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="n">NewFeatureDecisions</span><span class="p">(</span><span class="n">toggle</span> <span class="o">*</span><span class="n">ToggleRouter</span><span class="p">)</span> <span class="n">FeatureDecisions</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">FeatureDecisions</span><span class="p">{</span><span class="n">toggle</span><span class="o">:</span> <span class="n">toggle</span><span class="p">}</span>
+<span class="p">}</span>
+
+
+<span class="k">var</span> <span class="n">toggle</span> <span class="o">=</span> <span class="n">GetFeatureToggleRouter</span><span class="p">()</span>
+<span class="k">var</span> <span class="n">featureDecisions</span> <span class="o">=</span> <span class="n">NewFeatureDecision</span><span class="p">(</span><span class="n">toggle</span><span class="p">)</span>
+
+<span class="k">type</span> <span class="n">InvoiceEmailler</span> <span class="k">struct</span> <span class="p">{</span>
+    <span class="n">invoice</span> <span class="n">Invoice</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="p">(</span><span class="n">emailler</span> <span class="o">*</span><span class="n">InvoiceEmailler</span><span class="p">)</span> <span class="n">GenerateInvoiceEmail</span><span class="p">()</span> <span class="n">Email</span> <span class="p">{</span>
+    <span class="n">baseEmail</span> <span class="o">:=</span> <span class="n">buildEmailForInvoice</span><span class="p">(</span><span class="n">emailler</span><span class="o">.</span><span class="n">invoice</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">featureDecisions</span><span class="o">.</span><span class="n">IncludeOrderCancellationInEmail</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">addOrderCallationContentToEmail</span><span class="p">(</span><span class="n">baseEmail</span><span class="p">)</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">baseEmail</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+
+<p>通过引入 <code>FeatureDecisions</code> 之后，<code>InvoiceEmailler</code> 不再关心添加退货链接的逻辑是什么；而后续对与添加退货链接逻辑的更新也与 <code>InvoiceEmailler</code> 无关。从而实现了<strong>开关点与开关判断逻辑的解耦</strong>。</p>
+
+<h3 id="判断翻转inversion-of-decision">判断翻转(Inversion of Decision)</h3>
+
+<p>虽然在上一步中，我们通过添加<strong>判断逻辑层</strong>实现了判断逻辑与开关点的解耦，但是 <code>InvoiceEmailler</code>  依旧与  <code>FeatureDecisions</code>  耦合在一起，在执行 <code>GenerateInvoiceEmail()</code> 需要先创建或者获取  <code>FeatureDecisions</code> ，这处代码“坏味道”带来了两个缺点：</p>
+
+<ol>
+  <li>它不方便对于代码进行测试，在测试 <code>GenerateInvoiceEmail()</code> 函数之前，我们必须先设置好调用 <code>GetFeatureToggleRouter()</code> 与 <code>NewFeatureDecision()</code> 函数的环境。</li>
+  <li>随着项目功能模块的增多，每个模块都与 <code>FeatureDecisions</code>  模块发生了耦合，使得该模块变成了全局依赖模块。</li>
+</ol>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// invoice_emailler.go</span>
+
+<span class="k">type</span> <span class="n">EmaillerDecisions</span> <span class="k">interface</span> <span class="p">{</span>
+    <span class="n">IncludeOrderCancellationInEmail</span><span class="p">()</span> <span class="kt">bool</span>
+<span class="p">}</span>
+
+<span class="k">type</span> <span class="n">InvoiceEmailler</span> <span class="k">struct</span> <span class="p">{</span>
+    <span class="n">invoice</span> <span class="n">Invoice</span>
+    <span class="n">decisions</span> <span class="n">EmaillerDecisions</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="p">(</span><span class="n">emailler</span> <span class="o">*</span><span class="n">InvoiceEmailler</span><span class="p">)</span> <span class="n">SetDecisions</span><span class="p">(</span><span class="n">decisions</span> <span class="o">*</span><span class="n">FeatureDecisions</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">emailler</span><span class="o">.</span><span class="n">decisions</span> <span class="o">=</span> <span class="n">decisions</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="p">(</span><span class="n">emailler</span> <span class="o">*</span><span class="n">InvoiceEmailler</span><span class="p">)</span> <span class="n">GenerateInvoiceEmail</span><span class="p">()</span> <span class="n">Email</span> <span class="p">{</span>
+    <span class="n">baseEmail</span> <span class="o">:=</span> <span class="n">buildEmailForInvoice</span><span class="p">(</span><span class="n">emailler</span><span class="o">.</span><span class="n">invoice</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">emailler</span><span class="o">.</span><span class="n">decisions</span><span class="o">.</span><span class="n">includeOrderCancellationInEmail</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">addOrderCallationContentToEmail</span><span class="p">(</span><span class="n">baseEmail</span><span class="p">)</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">baseEmail</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c">// inject decisions module</span>
+<span class="k">func</span> <span class="n">NewInvoiceEmailler</span><span class="p">(</span><span class="n">decisions</span> <span class="n">EmaillerDecisions</span><span class="err">，</span> <span class="n">invoice</span> <span class="n">Invoice</span><span class="p">)</span> <span class="o">*</span><span class="n">InvoiceEmailler</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="o">&amp;</span><span class="n">InvoiceEmailler</span><span class="p">{</span>
+        <span class="n">invoice</span><span class="o">:</span> <span class="n">invoice</span><span class="p">,</span>
+        <span class="n">decisions</span><span class="o">:</span> <span class="n">decisions</span><span class="p">,</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+
+<p>此处“坏味道”的根本原因是业务模块对  <code>FeatureDecisions</code>  模块的依赖，通过<strong>控制反转</strong> 在 <code>InvoiceEmailler</code> 模块创建时，将 <code>FeatureDecisions</code>  注入到  <code>InvoiceEmailler</code>  中，就可以消除业务模块对与  <code>FeatureDecisions</code>  模块的依赖。</p>
+
+<h3 id="消除条件判断">消除条件判断</h3>
+
+<p>到现在位置我们代码已经获得了很大优化，那我们能不能在进一步消除 <code>GenerateInvoiceEmail()</code> 函数的条件判断呢？ 对于简单的场景下的条件判断语句是没有什么问题的，但是在复杂的业务逻辑中，太多的条件判断并不利于代码的维护。比如如果配置中包含 feature “after-sales-service”,  需要在 email 中添加售后服务的信息。现在我们必须回到  <code>GenerateInvoiceEmail()</code>，修改判断条件再加上添加售后服务的信息。</p>
+
+<p>通过策略模式，我们可以进一步的消除业务代码中的逻辑判断，提升代码的可扩展性。</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">type</span> <span class="n">EmaillerDecisions</span> <span class="k">interface</span> <span class="p">{</span>
+	<span class="n">IncludeOrderCancellationInEmail</span><span class="p">()</span> <span class="kt">bool</span>
+
+	<span class="n">IncludeAfterSalesServiceInEmail</span><span class="p">()</span> <span class="kt">bool</span>
+<span class="p">}</span>
+
+<span class="k">type</span> <span class="n">AdditionalContentEnhancer</span> <span class="k">interface</span> <span class="p">{</span>
+	<span class="n">EnhanceContent</span><span class="p">(</span><span class="n">Email</span><span class="p">)</span> <span class="n">Email</span>
+<span class="p">}</span>
+
+<span class="k">type</span> <span class="n">InvoiceEmailler</span> <span class="k">struct</span> <span class="p">{</span>
+	<span class="n">invoice</span>  <span class="n">Invoice</span>
+	<span class="n">enhancer</span> <span class="n">AdditionalContentEnhancer</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="p">(</span><span class="n">emailler</span> <span class="o">*</span><span class="n">InvoiceEmailler</span><span class="p">)</span> <span class="n">GenerateInvoiceEmail</span><span class="p">()</span> <span class="n">Email</span> <span class="p">{</span>
+	<span class="n">baseEmail</span> <span class="o">:=</span> <span class="n">buildEmailForInvoice</span><span class="p">(</span><span class="n">emailler</span><span class="o">.</span><span class="n">invoice</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">enhancer</span><span class="o">.</span><span class="n">EnhanceContent</span><span class="p">(</span><span class="n">baseEmail</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="k">type</span> <span class="n">OrderCallationContentEnhancer</span> <span class="k">struct</span><span class="p">{}</span>
+
+<span class="k">func</span> <span class="p">(</span><span class="n">e</span> <span class="n">OrderCallationContentEnhancer</span><span class="p">)</span> <span class="n">addOrderCallationContentToEmail</span><span class="p">(</span><span class="n">email</span> <span class="n">Email</span><span class="p">)</span> <span class="p">(</span><span class="n">newEmail</span> <span class="n">Email</span><span class="p">)</span> <span class="p">{</span>
+	<span class="c">// implement addOrderCallationContentToEmail</span>
+	<span class="k">return</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="p">(</span><span class="n">e</span> <span class="n">OrderCallationContentEnhancer</span><span class="p">)</span> <span class="n">EnhanceContent</span><span class="p">(</span><span class="n">email</span> <span class="n">Email</span><span class="p">)</span> <span class="n">Email</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="n">e</span><span class="o">.</span><span class="n">addOrderCallationContentToEmail</span><span class="p">(</span><span class="n">email</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="k">type</span> <span class="n">AfterSalesServiceContentEnhancer</span> <span class="k">struct</span><span class="p">{}</span>
+
+<span class="k">func</span> <span class="p">(</span><span class="n">e</span> <span class="n">AfterSalesServiceContentEnhancer</span><span class="p">)</span> <span class="n">addAfterSalesServiceContentToEmail</span><span class="p">(</span><span class="n">email</span> <span class="n">Email</span><span class="p">)</span> <span class="p">(</span><span class="n">newEmail</span> <span class="n">Email</span><span class="p">)</span> <span class="p">{</span>
+	<span class="c">// implement addAfterSalesServiceContentToEmail</span>
+	<span class="k">return</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="p">(</span><span class="n">e</span> <span class="n">AfterSalesServiceContentEnhancer</span><span class="p">)</span> <span class="n">EnhanceContent</span><span class="p">(</span><span class="n">email</span> <span class="n">Email</span><span class="p">)</span> <span class="n">Email</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="n">e</span><span class="o">.</span><span class="n">addAfterSalesServiceContentToEmail</span><span class="p">(</span><span class="n">email</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="k">type</span> <span class="n">OrderCallationAndAfterSalesServiceContentEnhancer</span> <span class="k">struct</span> <span class="p">{</span>
+	<span class="n">OrderCallationContentEnhancer</span>
+	<span class="n">AfterSalesServiceContentEnhancer</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="p">(</span><span class="n">e</span> <span class="n">OrderCallationAndAfterSalesServiceContentEnhancer</span><span class="p">)</span> <span class="n">EnhanceContent</span><span class="p">(</span><span class="n">email</span> <span class="n">Email</span><span class="p">)</span> <span class="n">Email</span> <span class="p">{</span>
+	<span class="n">email</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">OrderCallationContentEnhancer</span><span class="o">.</span><span class="n">EnhanceContent</span><span class="p">(</span><span class="n">email</span><span class="p">)</span>
+	<span class="n">email</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">AfterSalesServiceContentEnhancer</span><span class="o">.</span><span class="n">EnhanceContent</span><span class="p">(</span><span class="n">email</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">email</span>
+<span class="p">}</span>
+
+<span class="k">type</span> <span class="n">IdentityContentEnhancer</span> <span class="k">struct</span><span class="p">{}</span>
+
+<span class="k">func</span> <span class="p">(</span><span class="n">e</span> <span class="n">IdentityContentEnhancer</span><span class="p">)</span> <span class="n">EnhanceContent</span><span class="p">(</span><span class="n">email</span> <span class="n">Email</span><span class="p">)</span> <span class="n">Email</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="n">email</span>
+<span class="p">}</span>
+
+<span class="c">// inject decisions module</span>
+<span class="k">func</span> <span class="n">NewInvoiceEmailler</span><span class="p">(</span><span class="n">decisions</span> <span class="n">EmaillerDecisions</span><span class="p">,</span> <span class="n">invoice</span> <span class="n">Invoice</span><span class="p">)</span> <span class="o">*</span><span class="n">InvoiceEmailler</span> <span class="p">{</span>
+	<span class="n">emailler</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="n">InvoiceEmailler</span><span class="p">{</span>
+		<span class="n">invoice</span><span class="o">:</span> <span class="n">invoice</span><span class="p">,</span>
+	<span class="p">}</span>
+
+	<span class="k">if</span> <span class="n">decisions</span><span class="o">.</span><span class="n">IncludeOrderCancellationInEmail</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="n">decisions</span><span class="o">.</span><span class="n">IncludeAfterSalesServiceInEmail</span><span class="p">()</span> <span class="p">{</span>
+		<span class="n">emailler</span><span class="o">.</span><span class="n">enhancer</span> <span class="o">=</span> <span class="n">OrderCallationAndAfterSalesServiceContentEnhancer</span><span class="p">{}</span>
+	<span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="n">decisions</span><span class="o">.</span><span class="n">IncludeOrderCancellationInEmail</span><span class="p">()</span> <span class="p">{</span>
+		<span class="n">emailler</span><span class="o">.</span><span class="n">enhancer</span> <span class="o">=</span> <span class="n">OrderCallationContentEnhancer</span><span class="p">{}</span>
+	<span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="n">decisions</span><span class="o">.</span><span class="n">IncludeAfterSalesServiceInEmail</span><span class="p">()</span> <span class="p">{</span>
+		<span class="n">emailler</span><span class="o">.</span><span class="n">enhancer</span> <span class="o">=</span> <span class="n">AfterSalesServiceContentEnhancer</span><span class="p">{}</span>
+	<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+		<span class="n">emailler</span><span class="o">.</span><span class="n">enhancer</span> <span class="o">=</span> <span class="n">IdentityContentEnhancer</span><span class="p">{}</span>
+	<span class="p">}</span>
+
+	<span class="k">return</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+
+<p>到现在我们就差不多完成了对于代码的优化。</p>
+
+
+  </div><a class="u-url" href="/designpattern/softwareengineering/2020/04/20/Feature-Toggles.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Mengman的异想世界</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Mengman的异想世界</li><li><a class="u-email" href="mailto:corrsboy@gmail.com">corrsboy@gmail.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/Mengman"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">Mengman</span></a></li><li><a href="https://www.twitter.com/corrsboy"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#twitter"></use></svg> <span class="username">corrsboy</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>Program 4 Fun/n Program 4 Life</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
