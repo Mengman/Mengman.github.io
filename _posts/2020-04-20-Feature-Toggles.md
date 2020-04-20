@@ -6,7 +6,7 @@ categories: designpattern softwareengineering
 ---
 
 ## 功能开关
-本文受到 Pete Hodgson 的文章 [Feature Toggles (aka Feature Flags)](https://www.martinfowler.com/articles/feature-toggles.html) 的启发，原文比内容比本文更加丰富。
+本文受到 Pete Hodgson 的文章 [Feature Toggles (aka Feature Flags)](https://www.martinfowler.com/articles/feature-toggles.html) 启发，原文内容比本文更加丰富。
 
 ### 简单的功能开关
 
@@ -19,7 +19,7 @@ categories: designpattern softwareengineering
 ```go
 func doSomeThing() {
     useNewAlgorithm := false
-    // useNewAlgorithm := true // uncomment if you working with new algorithm     
+    // useNewAlgorithm := true // uncomment if you working with new algorithm
     if useNewAlgoritem {
         doSomeThingNew()
     } else {
@@ -37,7 +37,7 @@ func doSomeThingOld() {
 
 ```
 
-我们把新的功能写到 <code>doSomeThingNew</code> 函数中，并通过 <code>useNewAlgorithm</code> 变量来控制是否调用新功能。这个方法虽然简单，但是我们无法动态的，或者在运行时去决定是否启用新的功能。为了实现对于新功能的动态控制，我们可以引入一个**开关路由器**（toggle router）来实现。
+我们把新的功能写到 <code>doSomeThingNew</code> 函数中，并通过 <code>useNewAlgorithm</code> 变量来控制是否调用新功能。这个方法虽然简单，但是我们无法在运行时动态的去决定是否启用新的功能。为了实现对于新功能的动态控制，我们可以引入一个**开关路由器**（toggle router）来实现。
 
 ### 开关路由器
 
@@ -107,7 +107,7 @@ func (emailler *InvoiceEmailler) GenerateInvoiceEmail() Email {
 
 ### 解耦开关点与开关路由器
 
-幸好[“软件中的任何问题都可以通过引入一个间接层来解决”](https://en.wikipedia.org/wiki/Fundamental_theorem_of_software_engineering)  , 通过增加一个**开关逻辑判断层**我们可以解耦开关点与开关判断逻辑。
+幸好[“软件中的任何问题都可以通过引入一个间接层来解决”](https://en.wikipedia.org/wiki/Fundamental_theorem_of_software_engineering), 通过增加一个**开关逻辑判断层**我们可以解耦开关点与开关判断逻辑。
 
 ```go
 type FeatureDecisions struct {
@@ -145,10 +145,10 @@ func (emailler *InvoiceEmailler) GenerateInvoiceEmail() Email {
 
 ### 判断翻转(Inversion of Decision)
 
-虽然在上一步中，我们通过添加**判断逻辑层**实现了判断逻辑与开关点的解耦，但是 <code>InvoiceEmailler</code>  依旧与  <code>FeatureDecisions</code>  耦合在一起，在执行 <code>GenerateInvoiceEmail()</code> 需要先创建或者获取  <code>FeatureDecisions</code> ，这处代码“坏味道”带来了两个缺点：
+虽然在上一步中，我们通过添加**判断逻辑层**实现了判断逻辑与开关点的解耦，但是 <code>InvoiceEmailler</code> 依旧与 <code>FeatureDecisions</code> 耦合在一起，在执行 <code>GenerateInvoiceEmail()</code> 需要先创建或者获取 <code>FeatureDecisions</code> ，这处代码“坏味道”带来了两个问题：
 
-1. 它不方便对于代码进行测试，在测试 <code>GenerateInvoiceEmail()</code> 函数之前，我们必须先设置好调用 <code>GetFeatureToggleRouter()</code> 与 <code>NewFeatureDecision()</code> 函数的环境。
-2. 随着项目功能模块的增多，每个模块都与 <code>FeatureDecisions</code>  模块发生了耦合，使得该模块变成了全局依赖模块。
+1. 它不方便对代码进行测试，在测试 <code>GenerateInvoiceEmail()</code> 函数之前，我们必须先设置好调用 <code>GetFeatureToggleRouter()</code> 与 <code>NewFeatureDecision()</code> 函数的环境，才能确保可以到达待测试逻辑代码块。
+2. 随着项目功能模块的增多，每个模块都与 <code>FeatureDecisions</code> 模块发生了耦合，使得该模块变成了全局依赖模块。
 
 ```go
 // invoice_emailler.go
@@ -185,7 +185,7 @@ func NewInvoiceEmailler(decisions EmaillerDecisions， invoice Invoice) *Invoice
 
 ```
 
-此处“坏味道”的根本原因是业务模块对  <code>FeatureDecisions</code>  模块的依赖，通过**控制反转** 在 <code>InvoiceEmailler</code> 模块创建时，将 <code>FeatureDecisions</code>  注入到  <code>InvoiceEmailler</code>  中，就可以消除业务模块对与  <code>FeatureDecisions</code>  模块的依赖。
+此处“坏味道”的根本原因是业务模块对 <code>FeatureDecisions</code> 模块的依赖，通过**控制反转**在 <code>InvoiceEmailler</code> 模块创建时，将 <code>FeatureDecisions</code> 注入到 <code>InvoiceEmailler</code> 中，就可以消除业务模块对与 <code>FeatureDecisions</code> 模块的依赖。
 
 ### 消除条件判断
 
@@ -276,4 +276,3 @@ func NewInvoiceEmailler(decisions EmaillerDecisions, invoice Invoice) *InvoiceEm
 ```
 
 到现在我们就差不多完成了对于代码的优化。
-
