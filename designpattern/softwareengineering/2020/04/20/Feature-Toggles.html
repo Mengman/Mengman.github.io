@@ -7,15 +7,15 @@
 <meta name="generator" content="Jekyll v3.8.6" />
 <meta property="og:title" content="软件设计模型-功能开关" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="功能开关 本文受到 Pete Hodgson 的文章 Feature Toggles (aka Feature Flags) 的启发，原文比内容比本文更加丰富。" />
-<meta property="og:description" content="功能开关 本文受到 Pete Hodgson 的文章 Feature Toggles (aka Feature Flags) 的启发，原文比内容比本文更加丰富。" />
+<meta name="description" content="功能开关 本文受到 Pete Hodgson 的文章 Feature Toggles (aka Feature Flags) 启发，原文内容比本文更加丰富。" />
+<meta property="og:description" content="功能开关 本文受到 Pete Hodgson 的文章 Feature Toggles (aka Feature Flags) 启发，原文内容比本文更加丰富。" />
 <link rel="canonical" href="https://mengman.github.io/designpattern/softwareengineering/2020/04/20/Feature-Toggles.html" />
 <meta property="og:url" content="https://mengman.github.io/designpattern/softwareengineering/2020/04/20/Feature-Toggles.html" />
 <meta property="og:site_name" content="Mengman的异想世界" />
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2020-04-20T17:26:21+08:00" />
 <script type="application/ld+json">
-{"description":"功能开关 本文受到 Pete Hodgson 的文章 Feature Toggles (aka Feature Flags) 的启发，原文比内容比本文更加丰富。","@type":"BlogPosting","headline":"软件设计模型-功能开关","dateModified":"2020-04-20T17:26:21+08:00","url":"https://mengman.github.io/designpattern/softwareengineering/2020/04/20/Feature-Toggles.html","datePublished":"2020-04-20T17:26:21+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://mengman.github.io/designpattern/softwareengineering/2020/04/20/Feature-Toggles.html"},"@context":"https://schema.org"}</script>
+{"description":"功能开关 本文受到 Pete Hodgson 的文章 Feature Toggles (aka Feature Flags) 启发，原文内容比本文更加丰富。","@type":"BlogPosting","headline":"软件设计模型-功能开关","dateModified":"2020-04-20T17:26:21+08:00","url":"https://mengman.github.io/designpattern/softwareengineering/2020/04/20/Feature-Toggles.html","datePublished":"2020-04-20T17:26:21+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://mengman.github.io/designpattern/softwareengineering/2020/04/20/Feature-Toggles.html"},"@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="shortcut icon" href="assets/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://mengman.github.io/feed.xml" title="Mengman的异想世界" /></head><body><header class="site-header" role="banner">
@@ -48,7 +48,7 @@
 
   <div class="post-content e-content" itemprop="articleBody">
     <h2 id="功能开关">功能开关</h2>
-<p>本文受到 Pete Hodgson 的文章 <a href="https://www.martinfowler.com/articles/feature-toggles.html">Feature Toggles (aka Feature Flags)</a> 的启发，原文比内容比本文更加丰富。</p>
+<p>本文受到 Pete Hodgson 的文章 <a href="https://www.martinfowler.com/articles/feature-toggles.html">Feature Toggles (aka Feature Flags)</a> 启发，原文内容比本文更加丰富。</p>
 
 <h3 id="简单的功能开关">简单的功能开关</h3>
 
@@ -60,7 +60,7 @@
 
 <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="n">doSomeThing</span><span class="p">()</span> <span class="p">{</span>
     <span class="n">useNewAlgorithm</span> <span class="o">:=</span> <span class="no">false</span>
-    <span class="c">// useNewAlgorithm := true // uncomment if you working with new algorithm     </span>
+    <span class="c">// useNewAlgorithm := true // uncomment if you working with new algorithm</span>
     <span class="k">if</span> <span class="n">useNewAlgoritem</span> <span class="p">{</span>
         <span class="n">doSomeThingNew</span><span class="p">()</span>
     <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
@@ -78,7 +78,7 @@
 
 </code></pre></div></div>
 
-<p>我们把新的功能写到 <code>doSomeThingNew</code> 函数中，并通过 <code>useNewAlgorithm</code> 变量来控制是否调用新功能。这个方法虽然简单，但是我们无法动态的，或者在运行时去决定是否启用新的功能。为了实现对于新功能的动态控制，我们可以引入一个<strong>开关路由器</strong>（toggle router）来实现。</p>
+<p>我们把新的功能写到 <code>doSomeThingNew</code> 函数中，并通过 <code>useNewAlgorithm</code> 变量来控制是否调用新功能。这个方法虽然简单，但是我们无法在运行时动态的去决定是否启用新的功能。为了实现对于新功能的动态控制，我们可以引入一个<strong>开关路由器</strong>（toggle router）来实现。</p>
 
 <h3 id="开关路由器">开关路由器</h3>
 
@@ -146,7 +146,7 @@
 
 <h3 id="解耦开关点与开关路由器">解耦开关点与开关路由器</h3>
 
-<p>幸好<a href="https://en.wikipedia.org/wiki/Fundamental_theorem_of_software_engineering">“软件中的任何问题都可以通过引入一个间接层来解决”</a>  , 通过增加一个<strong>开关逻辑判断层</strong>我们可以解耦开关点与开关判断逻辑。</p>
+<p>幸好<a href="https://en.wikipedia.org/wiki/Fundamental_theorem_of_software_engineering">“软件中的任何问题都可以通过引入一个间接层来解决”</a>, 通过增加一个<strong>开关逻辑判断层</strong>我们可以解耦开关点与开关判断逻辑。</p>
 
 <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">FeatureDecisions</span> <span class="k">struct</span> <span class="p">{</span>
     <span class="n">toggle</span> <span class="o">*</span><span class="n">ToggleRouter</span>
@@ -183,11 +183,11 @@
 
 <h3 id="判断翻转inversion-of-decision">判断翻转(Inversion of Decision)</h3>
 
-<p>虽然在上一步中，我们通过添加<strong>判断逻辑层</strong>实现了判断逻辑与开关点的解耦，但是 <code>InvoiceEmailler</code>  依旧与  <code>FeatureDecisions</code>  耦合在一起，在执行 <code>GenerateInvoiceEmail()</code> 需要先创建或者获取  <code>FeatureDecisions</code> ，这处代码“坏味道”带来了两个缺点：</p>
+<p>虽然在上一步中，我们通过添加<strong>判断逻辑层</strong>实现了判断逻辑与开关点的解耦，但是 <code>InvoiceEmailler</code> 依旧与 <code>FeatureDecisions</code> 耦合在一起，在执行 <code>GenerateInvoiceEmail()</code> 需要先创建或者获取 <code>FeatureDecisions</code> ，这处代码“坏味道”带来了两个问题：</p>
 
 <ol>
-  <li>它不方便对于代码进行测试，在测试 <code>GenerateInvoiceEmail()</code> 函数之前，我们必须先设置好调用 <code>GetFeatureToggleRouter()</code> 与 <code>NewFeatureDecision()</code> 函数的环境。</li>
-  <li>随着项目功能模块的增多，每个模块都与 <code>FeatureDecisions</code>  模块发生了耦合，使得该模块变成了全局依赖模块。</li>
+  <li>它不方便对代码进行测试，在测试 <code>GenerateInvoiceEmail()</code> 函数之前，我们必须先设置好调用 <code>GetFeatureToggleRouter()</code> 与 <code>NewFeatureDecision()</code> 函数的环境，才能确保可以到达待测试逻辑代码块。</li>
+  <li>随着项目功能模块的增多，每个模块都与 <code>FeatureDecisions</code> 模块发生了耦合，使得该模块变成了全局依赖模块。</li>
 </ol>
 
 <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// invoice_emailler.go</span>
@@ -224,7 +224,7 @@
 
 </code></pre></div></div>
 
-<p>此处“坏味道”的根本原因是业务模块对  <code>FeatureDecisions</code>  模块的依赖，通过<strong>控制反转</strong> 在 <code>InvoiceEmailler</code> 模块创建时，将 <code>FeatureDecisions</code>  注入到  <code>InvoiceEmailler</code>  中，就可以消除业务模块对与  <code>FeatureDecisions</code>  模块的依赖。</p>
+<p>此处“坏味道”的根本原因是业务模块对 <code>FeatureDecisions</code> 模块的依赖，通过<strong>控制反转</strong>在 <code>InvoiceEmailler</code> 模块创建时，将 <code>FeatureDecisions</code> 注入到 <code>InvoiceEmailler</code> 中，就可以消除业务模块对与 <code>FeatureDecisions</code> 模块的依赖。</p>
 
 <h3 id="消除条件判断">消除条件判断</h3>
 
@@ -314,7 +314,6 @@
 </code></pre></div></div>
 
 <p>到现在我们就差不多完成了对于代码的优化。</p>
-
 
   </div><a class="u-url" href="/designpattern/softwareengineering/2020/04/20/Feature-Toggles.html" hidden></a>
 </article>
