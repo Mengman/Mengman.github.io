@@ -4,7 +4,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
 <title>On large-batch training for deep leanring: generalization gap and sharp minima 笔记 | Mengman的异想世界</title>
-<meta name="generator" content="Jekyll v3.8.7" />
+<meta name="generator" content="Jekyll v4.1.1" />
 <meta property="og:title" content="On large-batch training for deep leanring: generalization gap and sharp minima 笔记" />
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="论文题目: On large-batch training for deep leanring: generalization gap and sharp minima" />
@@ -15,7 +15,7 @@
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2019-07-29T17:26:21+08:00" />
 <script type="application/ld+json">
-{"datePublished":"2019-07-29T17:26:21+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://mengman.github.io/machinelearning/deeplearning/math/2019/07/29/On-large-batch-training-for-deep-learning-generalization-gap-and-sharp-minima.html"},"description":"论文题目: On large-batch training for deep leanring: generalization gap and sharp minima","@type":"BlogPosting","url":"https://mengman.github.io/machinelearning/deeplearning/math/2019/07/29/On-large-batch-training-for-deep-learning-generalization-gap-and-sharp-minima.html","headline":"On large-batch training for deep leanring: generalization gap and sharp minima 笔记","dateModified":"2019-07-29T17:26:21+08:00","@context":"https://schema.org"}</script>
+{"description":"论文题目: On large-batch training for deep leanring: generalization gap and sharp minima","headline":"On large-batch training for deep leanring: generalization gap and sharp minima 笔记","dateModified":"2019-07-29T17:26:21+08:00","datePublished":"2019-07-29T17:26:21+08:00","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://mengman.github.io/machinelearning/deeplearning/math/2019/07/29/On-large-batch-training-for-deep-learning-generalization-gap-and-sharp-minima.html"},"url":"https://mengman.github.io/machinelearning/deeplearning/math/2019/07/29/On-large-batch-training-for-deep-learning-generalization-gap-and-sharp-minima.html","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="shortcut icon" href="assets/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://mengman.github.io/feed.xml" title="Mengman的异想世界" /></head><body><header class="site-header" role="banner">
@@ -47,6 +47,10 @@
   </header>
 
   <div class="post-content e-content" itemprop="articleBody">
+    <ul>
+  <li><a href="#大-batch-size-的缺点">大 batch size 的缺点</a></li>
+</ul>
+
     <p><strong>论文题目:</strong> On large-batch training for deep leanring: generalization gap and sharp minima</p>
 
 <p><strong>论文内容：</strong> 在SGD中使用较大的batch-size会导致模型的泛化能力退化，因为较大的batch size 模型更加容易在 sharp minima处收敛，较小的batch size使模型在 flat minima处收敛。</p>
@@ -67,7 +71,7 @@
 
 <h3 id="大-batch-size-的缺点">大 batch size 的缺点</h3>
 
-<p>大 batch size 的泛化能力差是因为，它倾向收敛在 sharp minima 处。 极小值的 sharpness 是由 <script type="math/tex">\nabla ^2 f(x)</script> 正特征值的大小来决定的，特征值越大，极小值就越 sharp， 泛化能力也就越差。</p>
+<p>大 batch size 的泛化能力差是因为，它倾向收敛在 sharp minima 处。 极小值的 sharpness 是由 \(\nabla ^2 f(x)\) 正特征值的大小来决定的，特征值越大，极小值就越 sharp， 泛化能力也就越差。</p>
 
 
   </div><a class="u-url" href="/machinelearning/deeplearning/math/2019/07/29/On-large-batch-training-for-deep-learning-generalization-gap-and-sharp-minima.html" hidden></a>
