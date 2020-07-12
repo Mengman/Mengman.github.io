@@ -1,4 +1,108 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.7">Jekyll</generator><link href="https://mengman.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://mengman.github.io/" rel="alternate" type="text/html" /><updated>2020-07-12T16:31:03+08:00</updated><id>https://mengman.github.io/feed.xml</id><title type="html">Mengman的异想世界</title><subtitle>Program 4 Fun/n Program 4 Life</subtitle><entry><title type="html">软件设计模型-功能开关</title><link href="https://mengman.github.io/designpattern/softwareengineering/2020/04/20/Feature-Toggles.html" rel="alternate" type="text/html" title="软件设计模型-功能开关" /><published>2020-04-20T17:26:21+08:00</published><updated>2020-04-20T17:26:21+08:00</updated><id>https://mengman.github.io/designpattern/softwareengineering/2020/04/20/Feature-Toggles</id><content type="html" xml:base="https://mengman.github.io/designpattern/softwareengineering/2020/04/20/Feature-Toggles.html">&lt;h2 id=&quot;功能开关&quot;&gt;功能开关&lt;/h2&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.7">Jekyll</generator><link href="https://mengman.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://mengman.github.io/" rel="alternate" type="text/html" /><updated>2020-07-12T17:33:52+08:00</updated><id>https://mengman.github.io/feed.xml</id><title type="html">Mengman的异想世界</title><subtitle>Program 4 Fun/n Program 4 Life</subtitle><entry><title type="html">机器学习基石 第二讲</title><link href="https://mengman.github.io/machinelearning/deeplearning/math/2020/07/12/machine-learning-foundations-lession-2.html" rel="alternate" type="text/html" title="机器学习基石 第二讲" /><published>2020-07-12T01:26:21+08:00</published><updated>2020-07-12T01:26:21+08:00</updated><id>https://mengman.github.io/machinelearning/deeplearning/math/2020/07/12/machine-learning-foundations-lession-2</id><content type="html" xml:base="https://mengman.github.io/machinelearning/deeplearning/math/2020/07/12/machine-learning-foundations-lession-2.html">&lt;h1 id=&quot;感知机&quot;&gt;感知机&lt;/h1&gt;
+&lt;p&gt;[tOC]&lt;/p&gt;
+&lt;h2 id=&quot;感知器假设集perceptron-hypothesis-set&quot;&gt;感知器假设集（Perceptron Hypothesis Set）&lt;/h2&gt;
+&lt;p&gt;感知器算法： $h(x)=sign((\sum_{i=1}^dw_ix_i)-threshold)$&lt;/p&gt;
+
+&lt;p&gt;对上面的公示进行变形，将&lt;strong&gt;threshold&lt;/strong&gt;作为偏置，纳入 x 中，$x_0=+1$;
+&lt;script type=&quot;math/tex&quot;&gt;h(x)=sign(W^TX)&lt;/script&gt;
+每一个不同的W代表了算法中的一个hypothesis.&lt;/p&gt;
+
+&lt;h2 id=&quot;pla-感知器学习算法&quot;&gt;PLA 感知器学习算法&lt;/h2&gt;
+
+&lt;p&gt;要从 hypothesis set 中找到一个合适的 hypothesis g, 让 g 与目标函数 f 尽可能的相近。&lt;/p&gt;
+
+&lt;p&gt;PLA算法通过试错的方法实现模型的训练：&lt;/p&gt;
+
+&lt;p&gt;总共进行t轮的训练， t=0, 1, …&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;随机初始化 w&lt;sub&gt;0&lt;/sub&gt;;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;将样本 $(x_{n(t)},y_{n(t)})$ 带入PLA学习机， 如果：
+&lt;script type=&quot;math/tex&quot;&gt;sign(w^T_tx_{n(t)})\neq y_{n(t)}&lt;/script&gt;
+那么，表示发生错误，需要对错误进行纠正。&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;修正错误：
+&lt;script type=&quot;math/tex&quot;&gt;w_{t+1} \leftarrow w_t + y_{n(t)}x_{n(t)}&lt;/script&gt;&lt;/p&gt;
+
+    &lt;p&gt;$w$: 代表分类线的法向量
+$x_n$: 是原点到 $x_n$ 的向量
+&lt;img src=&quot;/assets/ml_base_2_1.png&quot; alt=&quot;ml_base_2_1&quot; /&gt;
+       * 当 $y_n = +1$, 将 $w$ 的方向向样本 $(x_n, y_n)$ 的方向转动。
+       * 当 $y_n = -1$, 将$w$的方向向样本 $(x_n, y_n)$ 的反方向转动。 
+       * 当不再出现错误的时候，训练结束。&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;strong&gt;PLA算法要能终止，要求训练数据集必须是线性可分的&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;$w_t$ 越来越接近 $w_f$&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;$w_f$: 目标函数 f 对应的参数，因此对于任意一个样本，它都能正确的分类：
+&lt;script type=&quot;math/tex&quot;&gt;y_{n(t)}w^T_fx_{n(t)} \ge \min_ny_nw^T_fx_n \gt 0&lt;/script&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;衡量两个向量是否接近，可以用它们的内积，如果内积越小代表它们越不接近，相互垂直时为 0
+&lt;script type=&quot;math/tex&quot;&gt;% &lt;![CDATA[
+\begin{align}
+\begin{split}
+w_f^Tw_{t+1} &amp;= w_f^T(w_t+y_{n(t)}x_{n(t)}) \\
+&amp;\ge w_f^Tw_t + \min_ny_nw_f^Tx_n \\
+&amp;\gt w_f^Tw_t + 0
+\end{split}
+\end{align} %]]&gt;&lt;/script&gt;&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;$w_t$ 的增长速率不快&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;$w_t$每次的更新不超过离分割线最远的样本的距离&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;$w_t$ 的每次更新发生在有错误的时候：
+ &lt;script type=&quot;math/tex&quot;&gt;sign(w_t^fx_{n(t)}) \neq y_{n(t)} \Leftrightarrow y_{n(t)}w_t^Tx_{n(t)} \leq 0&lt;/script&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;对于每一次更新后的结果：
+ &lt;script type=&quot;math/tex&quot;&gt;% &lt;![CDATA[
+\begin{equation}\begin{split} ||w_{t+1}||^2 &amp;= ||w_t + y_{n(t)}x_{n(t)}||^2\\\\
+ &amp;= ||w_t||^2 + 2y_{n(t)}w_t^Tx_{n(t)} + ||y_{n(t)}x_{n(t)}||^2\\\\
+ &amp;\le ||w_t||^2 + 0 + ||y_{n(t)x_{n(t)}}||^2\\\\
+ &amp;\le ||w_t||^2 + \max_n||y_{n(t)}x_{n(t)}||^2\end{split}\end{equation} %]]&gt;&lt;/script&gt;&lt;/p&gt;
+
+    &lt;p&gt;其中 $ \max_n||y_{n(t)}x_{n(t)}||^2$ 就代表了距离到分隔线最远的点的距离。
+$$
+\begin{equation}\begin{split}
+ \text{start from w_0 = 0, after T mistake corrections,} \&lt;/p&gt;
+
+    &lt;p&gt;\frac{w_f^T}{\Vert w_f \Vert} \frac{w_T}{\Vert w_T \Vert} \ge \sqrt T * \text{constant}&lt;/p&gt;
+
+    &lt;p&gt;\end{split}\end{equation}
+$$&lt;/p&gt;
+
+    &lt;p&gt;$w_f^Tw_{t+1}$的内积是小于等于1的，再根据上面的式子，知道T不可能为无穷大，所以运算会终止。&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;pocket-算法&quot;&gt;Pocket 算法&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;算法步骤&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;随机初始化 w&lt;/li&gt;
+  &lt;li&gt;进行 t 轮的学习， t = 0, 1, …&lt;/li&gt;
+  &lt;li&gt;如果发生错误，按照 PLA 算法对 w进行纠正：$w_{t+1} \leftarrow w_t + y_{n(t)}x_{n(t)}$&lt;/li&gt;
+  &lt;li&gt;判断对比纠正后的算法与之前算法的错误率，如果更好，者保留新的w&lt;sub&gt;t+1&lt;/sub&gt;, 否者保留之前的w。&lt;/li&gt;
+  &lt;li&gt;运算足够多次之后停止运算。&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Pocket算法是PLA的改进算法，用于解决&lt;strong&gt;线性不可分&lt;/strong&gt;的数据集。
+Pocket算法的运算量大：对于比PLA，在得到新的w&lt;sub&gt;t+1&lt;/sub&gt;， 需要将所有数据集运算一遍，来获得错误率。&lt;/p&gt;</content><author><name></name></author><category term="machinelearning" /><category term="deeplearning" /><category term="math" /><summary type="html">感知机 [tOC] 感知器假设集（Perceptron Hypothesis Set） 感知器算法： $h(x)=sign((\sum_{i=1}^dw_ix_i)-threshold)$ 对上面的公示进行变形，将threshold作为偏置，纳入 x 中，$x_0=+1$; 每一个不同的W代表了算法中的一个hypothesis. PLA 感知器学习算法 要从 hypothesis set 中找到一个合适的 hypothesis g, 让 g 与目标函数 f 尽可能的相近。 PLA算法通过试错的方法实现模型的训练： 总共进行t轮的训练， t=0, 1, … 随机初始化 w0; 将样本 $(x_{n(t)},y_{n(t)})$ 带入PLA学习机， 如果： 那么，表示发生错误，需要对错误进行纠正。 修正错误： $w$: 代表分类线的法向量 $x_n$: 是原点到 $x_n$ 的向量 * 当 $y_n = +1$, 将 $w$ 的方向向样本 $(x_n, y_n)$ 的方向转动。 * 当 $y_n = -1$, 将$w$的方向向样本 $(x_n, y_n)$ 的反方向转动。 * 当不再出现错误的时候，训练结束。 PLA算法要能终止，要求训练数据集必须是线性可分的 $w_t$ 越来越接近 $w_f$ $w_f$: 目标函数 f 对应的参数，因此对于任意一个样本，它都能正确的分类： 衡量两个向量是否接近，可以用它们的内积，如果内积越小代表它们越不接近，相互垂直时为 0 $w_t$ 的增长速率不快 $w_t$每次的更新不超过离分割线最远的样本的距离 $w_t$ 的每次更新发生在有错误的时候： 对于每一次更新后的结果： 其中 $ \max_n||y_{n(t)}x_{n(t)}||^2$ 就代表了距离到分隔线最远的点的距离。 $$ \begin{equation}\begin{split} \text{start from w_0 = 0, after T mistake corrections,} \ \frac{w_f^T}{\Vert w_f \Vert} \frac{w_T}{\Vert w_T \Vert} \ge \sqrt T * \text{constant} \end{split}\end{equation} $$ $w_f^Tw_{t+1}$的内积是小于等于1的，再根据上面的式子，知道T不可能为无穷大，所以运算会终止。 Pocket 算法 算法步骤 随机初始化 w 进行 t 轮的学习， t = 0, 1, … 如果发生错误，按照 PLA 算法对 w进行纠正：$w_{t+1} \leftarrow w_t + y_{n(t)}x_{n(t)}$ 判断对比纠正后的算法与之前算法的错误率，如果更好，者保留新的wt+1, 否者保留之前的w。 运算足够多次之后停止运算。 Pocket算法是PLA的改进算法，用于解决线性不可分的数据集。 Pocket算法的运算量大：对于比PLA，在得到新的wt+1， 需要将所有数据集运算一遍，来获得错误率。</summary></entry><entry><title type="html">软件设计模型-功能开关</title><link href="https://mengman.github.io/designpattern/softwareengineering/2020/04/20/Feature-Toggles.html" rel="alternate" type="text/html" title="软件设计模型-功能开关" /><published>2020-04-20T17:26:21+08:00</published><updated>2020-04-20T17:26:21+08:00</updated><id>https://mengman.github.io/designpattern/softwareengineering/2020/04/20/Feature-Toggles</id><content type="html" xml:base="https://mengman.github.io/designpattern/softwareengineering/2020/04/20/Feature-Toggles.html">&lt;h2 id=&quot;功能开关&quot;&gt;功能开关&lt;/h2&gt;
 &lt;p&gt;本文受到 Pete Hodgson 的文章 &lt;a href=&quot;https://www.martinfowler.com/articles/feature-toggles.html&quot;&gt;Feature Toggles (aka Feature Flags)&lt;/a&gt; 启发，原文内容比本文更加丰富。&lt;/p&gt;
 
 &lt;h3 id=&quot;简单的功能开关&quot;&gt;简单的功能开关&lt;/h3&gt;
