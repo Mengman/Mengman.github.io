@@ -1,10 +1,11 @@
 ---
 layout: post
-title:  "机器学习基石 第二讲"
-date:   2020-07-12 17:26:21 +0800
+title: "机器学习基石 第二讲"
+date: 2020-07-12 17:26:21 +0800
 categories: machinelearning deeplearning math
 typora-root-url: ..
 ---
+
 # 感知机
 [tOC]
 ## 感知器假设集（Perceptron Hypothesis Set）
