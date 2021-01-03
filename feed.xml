@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.1.1">Jekyll</generator><link href="https://mengman.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://mengman.github.io/" rel="alternate" type="text/html" /><updated>2021-01-03T22:09:29+08:00</updated><id>https://mengman.github.io/feed.xml</id><title type="html">Mengman的异想世界</title><subtitle>Program 4 Fun/n Program 4 Life</subtitle><entry><title type="html">机器学习中的交叉熵</title><link href="https://mengman.github.io/machinelearning/math/2020/09/27/cross-entropy.html" rel="alternate" type="text/html" title="机器学习中的交叉熵" /><published>2020-09-27T14:11:00+08:00</published><updated>2020-09-27T14:11:00+08:00</updated><id>https://mengman.github.io/machinelearning/math/2020/09/27/cross-entropy</id><content type="html" xml:base="https://mengman.github.io/machinelearning/math/2020/09/27/cross-entropy.html">&lt;h1 id=&quot;机器学习中的交叉熵&quot;&gt;机器学习中的交叉熵&lt;/h1&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.1.1">Jekyll</generator><link href="https://mengman.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://mengman.github.io/" rel="alternate" type="text/html" /><updated>2021-01-03T22:44:38+08:00</updated><id>https://mengman.github.io/feed.xml</id><title type="html">Mengman的异想世界</title><subtitle>Program 4 Fun/n Program 4 Life</subtitle><entry><title type="html">机器学习中的交叉熵</title><link href="https://mengman.github.io/machinelearning/math/2020/09/27/cross-entropy.html" rel="alternate" type="text/html" title="机器学习中的交叉熵" /><published>2020-09-27T14:11:00+08:00</published><updated>2020-09-27T14:11:00+08:00</updated><id>https://mengman.github.io/machinelearning/math/2020/09/27/cross-entropy</id><content type="html" xml:base="https://mengman.github.io/machinelearning/math/2020/09/27/cross-entropy.html">&lt;h1 id=&quot;机器学习中的交叉熵&quot;&gt;机器学习中的交叉熵&lt;/h1&gt;
 
 &lt;p&gt;交叉熵损失函数是机器学习分类问题中最常用的一个损失函数。但是很多人对于“交叉熵”的概念缺乏理解。本文的目的是希望能够通俗易懂的解释清楚 “熵”， “交叉熵” 和 “KL-散度” 这三个相关的概念。&lt;/p&gt;
 
@@ -80,17 +80,19 @@
 
 &lt;p&gt;图中红色的概率代表天气的真实分布，而蓝色概率代表按照编码长度推算出来的对于天气概率的估计。真实的概率分布于估计概率分布之间的关系可以用&lt;strong&gt;交叉熵&lt;/strong&gt;的形式表达出来。&lt;/p&gt;
 
-&lt;p&gt;\(\text{CrossEntropy,}H(p,q) = - \sum{p(i)log(q(i))}\)
-通过前面的内容我们可以知道，只有&lt;strong&gt;估计概率越接近于真正的概率，交叉熵才会越小，当估计概率等于真实概率时，交叉熵等于信息熵。&lt;/strong&gt;&lt;/p&gt;
+\[\text{CrossEntropy,}H(p,q) = - \sum{p(i)log(q(i))}\]
 
-&lt;p&gt;交叉熵公式于信息熵公式的不同之处在于，将 log 部分的概率分布替换成了&lt;strong&gt;预测概率分布&lt;/strong&gt;。&lt;strong&gt;交叉熵大于信息熵的部分叫做Kullback-Leibler Divergence（KL散度）也叫相对熵（Relative Entropy）&lt;/strong&gt;。
-\(\begin{aligned}
+&lt;p&gt;通过前面的内容我们可以知道，只有&lt;strong&gt;估计概率越接近于真正的概率，交叉熵才会越小，当估计概率等于真实概率时，交叉熵等于信息熵。&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;交叉熵公式于信息熵公式的不同之处在于，将 log 部分的概率分布替换成了&lt;strong&gt;预测概率分布&lt;/strong&gt;。&lt;strong&gt;交叉熵大于信息熵的部分叫做Kullback-Leibler Divergence（KL散度）也叫相对熵（Relative Entropy）&lt;/strong&gt;。&lt;/p&gt;
+
+\[\begin{aligned}
 \text{KL-Divergence} &amp;amp;= \text{Entropy} - \text{CrossEntropy}  \\
 D_{KL}(p||q) &amp;amp; = H(p,q) - H(p) \\
 &amp;amp; = -\sum_i{p_ilog(q_i)} - (-\sum_i{p_ilog(p_i)}) \\
 &amp;amp; = -\sum_i{p_ilog(q_i)} + \sum_i{p_ilog(p_i)} \\
 &amp;amp; = \sum_i{p_i log(\frac{p_i}{q_i})}
-\end{aligned}\)&lt;/p&gt;
+\end{aligned}\]
 
 &lt;h2 id=&quot;交叉熵在机器学习中的应用&quot;&gt;交叉熵在机器学习中的应用&lt;/h2&gt;
 

@@ -17,7 +17,7 @@
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="机器学习中的交叉熵" />
 <script type="application/ld+json">
-{"mainEntityOfPage":{"@type":"WebPage","@id":"https://mengman.github.io/machinelearning/math/2020/09/27/cross-entropy.html"},"description":"机器学习中的交叉熵","@type":"BlogPosting","headline":"机器学习中的交叉熵","dateModified":"2020-09-27T14:11:00+08:00","datePublished":"2020-09-27T14:11:00+08:00","url":"https://mengman.github.io/machinelearning/math/2020/09/27/cross-entropy.html","@context":"https://schema.org"}</script>
+{"headline":"机器学习中的交叉熵","description":"机器学习中的交叉熵","datePublished":"2020-09-27T14:11:00+08:00","dateModified":"2020-09-27T14:11:00+08:00","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://mengman.github.io/machinelearning/math/2020/09/27/cross-entropy.html"},"url":"https://mengman.github.io/machinelearning/math/2020/09/27/cross-entropy.html","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="shortcut icon" href="assets/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://mengman.github.io/feed.xml" title="Mengman的异想世界" /></head><body><header class="site-header" role="banner">
@@ -146,17 +146,19 @@
 
 <p>图中红色的概率代表天气的真实分布，而蓝色概率代表按照编码长度推算出来的对于天气概率的估计。真实的概率分布于估计概率分布之间的关系可以用<strong>交叉熵</strong>的形式表达出来。</p>
 
-<p>\(\text{CrossEntropy,}H(p,q) = - \sum{p(i)log(q(i))}\)
-通过前面的内容我们可以知道，只有<strong>估计概率越接近于真正的概率，交叉熵才会越小，当估计概率等于真实概率时，交叉熵等于信息熵。</strong></p>
+\[\text{CrossEntropy,}H(p,q) = - \sum{p(i)log(q(i))}\]
 
-<p>交叉熵公式于信息熵公式的不同之处在于，将 log 部分的概率分布替换成了<strong>预测概率分布</strong>。<strong>交叉熵大于信息熵的部分叫做Kullback-Leibler Divergence（KL散度）也叫相对熵（Relative Entropy）</strong>。
-\(\begin{aligned}
+<p>通过前面的内容我们可以知道，只有<strong>估计概率越接近于真正的概率，交叉熵才会越小，当估计概率等于真实概率时，交叉熵等于信息熵。</strong></p>
+
+<p>交叉熵公式于信息熵公式的不同之处在于，将 log 部分的概率分布替换成了<strong>预测概率分布</strong>。<strong>交叉熵大于信息熵的部分叫做Kullback-Leibler Divergence（KL散度）也叫相对熵（Relative Entropy）</strong>。</p>
+
+\[\begin{aligned}
 \text{KL-Divergence} &amp;= \text{Entropy} - \text{CrossEntropy}  \\
 D_{KL}(p||q) &amp; = H(p,q) - H(p) \\
 &amp; = -\sum_i{p_ilog(q_i)} - (-\sum_i{p_ilog(p_i)}) \\
 &amp; = -\sum_i{p_ilog(q_i)} + \sum_i{p_ilog(p_i)} \\
 &amp; = \sum_i{p_i log(\frac{p_i}{q_i})}
-\end{aligned}\)</p>
+\end{aligned}\]
 
 <h2 id="交叉熵在机器学习中的应用">交叉熵在机器学习中的应用</h2>
 
