@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Python 依赖管理软件 Poetry 上手 | Mengman的异想世界</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="Python 依赖管理软件 Poetry 上手" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Python 项目管理 Poetry 上手" />
+<meta property="og:description" content="Python 项目管理 Poetry 上手" />
+<link rel="canonical" href="https://mengman.github.io/designpattern/softwareengineering/2020/04/20/Python-Poetry-In-Action.html" />
+<meta property="og:url" content="https://mengman.github.io/designpattern/softwareengineering/2020/04/20/Python-Poetry-In-Action.html" />
+<meta property="og:site_name" content="Mengman的异想世界" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-04-20T17:26:21+08:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Python 依赖管理软件 Poetry 上手" />
+<script type="application/ld+json">
+{"mainEntityOfPage":{"@type":"WebPage","@id":"https://mengman.github.io/designpattern/softwareengineering/2020/04/20/Python-Poetry-In-Action.html"},"description":"Python 项目管理 Poetry 上手","@type":"BlogPosting","headline":"Python 依赖管理软件 Poetry 上手","dateModified":"2020-04-20T17:26:21+08:00","datePublished":"2020-04-20T17:26:21+08:00","url":"https://mengman.github.io/designpattern/softwareengineering/2020/04/20/Python-Poetry-In-Action.html","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="assets/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://mengman.github.io/feed.xml" title="Mengman的异想世界" /></head><body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Mengman的异想世界</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Python 依赖管理软件 Poetry 上手</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2020-04-20T17:26:21+08:00" itemprop="datePublished">Apr 20, 2020
+      </time></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul>
+  <li><a href="#python-项目管理-poetry-上手">Python 项目管理 Poetry 上手</a>
+    <ul>
+      <li><a href="#poetry-配置">Poetry 配置</a>
+        <ul>
+          <li><a href="#1--安装">1  安装</a></li>
+          <li><a href="#2-安装检查">2. 安装检查</a></li>
+          <li><a href="#3更新卸载-poetry">3.更新&amp;卸载 Poetry</a></li>
+        </ul>
+      </li>
+      <li><a href="#基本用法">基本用法</a></li>
+    </ul>
+  </li>
+</ul>
+
+    <h2 id="python-项目管理-poetry-上手">Python 项目管理 Poetry 上手</h2>
+
+<p>Python 项目依赖管理工具有 virtualenv pipenv anaconda，来帮助项目做到项目之间的环境隔离，依赖管理等。今天介绍的 Poetry 是它更像是 Python 项目 CLI 工具，能够进行项目模板创建，依赖管理，项目构建与发布等。Poetry v0.1.0 版本发布2018-02，到现在两年的时间，目前社区比较活跃。</p>
+
+<h3 id="poetry-配置">Poetry 配置</h3>
+
+<h4 id="1--安装">1  安装</h4>
+
+<p>OSX / Linux / bashonwindows 使用脚本自动安装</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl <span class="nt">-sSL</span> https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
+</code></pre></div></div>
+
+<p>在类 *nix 的系统中 Poetry 会默认安装在 <code>$HOME/.poetry/bin </code> 中， 在window系统下默认安装目录为 <code>%USERPROFILE%\.poetry\bin</code>。</p>
+
+<p>如果要修改安装目录，需要在运行安装脚本时通过环境变量 <code>POETRY_HOME</code> 来指定。 使用参数 <code>--version</code> 或者环境变量 <code>POETRY_VERSION</code> 可以指定安装版本。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">POETRY_HOME</span><span class="o">=</span>/etc/poetry python get-poetry.py <span class="nt">--version</span> 1.0.5
+</code></pre></div></div>
+
+<h4 id="2-安装检查">2. 安装检查</h4>
+
+<p>安装成功后检查 poetry 版本</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>poetry <span class="nt">--version</span>
+</code></pre></div></div>
+
+<p>如果无法找到  <code>poetry</code> 命令， 那么记得把安装目录加到 $PATH 中。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">export</span> <span class="nv">$PATH</span><span class="o">=</span><span class="nv">$HOME</span>/.poetry/bin:<span class="nv">$PATH</span>
+</code></pre></div></div>
+
+<h4 id="3更新卸载-poetry">3.更新&amp;卸载 Poetry</h4>
+
+<p>更新 Poetry</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 更新到最新的稳定版本</span>
+poetry self update
+
+<span class="c"># 更新到预览版本</span>
+poetry self udpate <span class="nt">--preview</span>
+
+<span class="c"># 更新到指定版本</span>
+poetry self update 1.0.5
+</code></pre></div></div>
+
+<p>卸载 Poetry</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python get-poetry.py <span class="nt">--uninstall</span>
+</code></pre></div></div>
+
+<h3 id="基本用法">基本用法</h3>
+
+
+  </div><a class="u-url" href="/designpattern/softwareengineering/2020/04/20/Python-Poetry-In-Action.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Mengman的异想世界</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Mengman的异想世界</li><li><a class="u-email" href="mailto:corrsboy@gmail.com">corrsboy@gmail.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/Mengman"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">Mengman</span></a></li><li><a href="https://www.twitter.com/corrsboy"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#twitter"></use></svg> <span class="username">corrsboy</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>Program 4 Fun/n Program 4 Life</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

@@ -1,4 +1,108 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.1.1">Jekyll</generator><link href="https://mengman.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://mengman.github.io/" rel="alternate" type="text/html" /><updated>2020-07-26T21:50:42+08:00</updated><id>https://mengman.github.io/feed.xml</id><title type="html">Mengman的异想世界</title><subtitle>Program 4 Fun/n Program 4 Life</subtitle><entry><title type="html">pkg-config 入门</title><link href="https://mengman.github.io/c++/linux/2020/07/26/pkg-config-introduction.html" rel="alternate" type="text/html" title="pkg-config 入门" /><published>2020-07-26T00:41:00+08:00</published><updated>2020-07-26T00:41:00+08:00</updated><id>https://mengman.github.io/c++/linux/2020/07/26/pkg-config-introduction</id><content type="html" xml:base="https://mengman.github.io/c++/linux/2020/07/26/pkg-config-introduction.html">&lt;h1 id=&quot;pkg-config-入门&quot;&gt;pkg-config 入门&lt;/h1&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.1.1">Jekyll</generator><link href="https://mengman.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://mengman.github.io/" rel="alternate" type="text/html" /><updated>2021-01-03T21:59:52+08:00</updated><id>https://mengman.github.io/feed.xml</id><title type="html">Mengman的异想世界</title><subtitle>Program 4 Fun/n Program 4 Life</subtitle><entry><title type="html">机器学习中的交叉熵</title><link href="https://mengman.github.io/machinelearning/math/2020/09/27/cross-entropy.html" rel="alternate" type="text/html" title="机器学习中的交叉熵" /><published>2020-09-27T14:11:00+08:00</published><updated>2020-09-27T14:11:00+08:00</updated><id>https://mengman.github.io/machinelearning/math/2020/09/27/cross-entropy</id><content type="html" xml:base="https://mengman.github.io/machinelearning/math/2020/09/27/cross-entropy.html">&lt;h1 id=&quot;机器学习中的交叉熵&quot;&gt;机器学习中的交叉熵&lt;/h1&gt;
+
+&lt;p&gt;交叉熵损失函数是机器学习分类问题中最常用的一个损失函数。但是很多人对于“交叉熵”的概念缺乏理解。本文的目的是希望能够通俗易懂的解释清楚 “熵”， “交叉熵” 和 “KL-散度” 这三个相关的概念。&lt;/p&gt;
+
+&lt;h2 id=&quot;信息论中的熵&quot;&gt;信息论中的“熵”&lt;/h2&gt;
+
+&lt;p&gt;“熵” (entropy) 这个概念在热力学中表示一个系统的无序程度，熵越大系统就越混乱。1948年香农在其发表的《通信的数学理论》论文中给出了”信息熵“的定义：信息熵是随机事件不确定性的度量。信息熵与热力学熵有着紧密的内在联系，不过在本文中所讨论的熵都是指信息熵。&lt;/p&gt;
+
+&lt;h3 id=&quot;有效信息长度&quot;&gt;有效信息长度&lt;/h3&gt;
+
+&lt;p&gt;为了能更好的解释信息熵，我们先来看一个例子。有一个气象监测站，通过检测某地的气象数据，能给出第二天的天气预测。气象站需要将预测结果网络发送给气象中心。如果当地只有两种天气一种是晴天，一种是雨天，那么气象站如何能够高效的发送预测结果呢？最简单的情况下，气象站可以将预测结果以汉字的形式发送出去。如果预测是晴天就发送”晴天“，如果是雨天就发送”雨天“。我们知道一个汉字在计算机中通常的编码长度是 2 byte，也就是 8 bit，那么这两个汉字就是 16 bit。为了能更高效的发送信息，我们可以对信息进行编码，用 0 来表示晴天，1 来表示雨天。那么我们需要发送的信息长度就只有 1 bit 了。对于原来长度为 16 bit 的信息来说，它&lt;strong&gt;真正有效的信息长度&lt;/strong&gt;其实只有 1 bit。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/entropy1.png&quot; alt=&quot;weather_2&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;那如果当地天气有8种情况，我们需要多少长度的消息才能发送预测结果呢？答案很简单：\(2^3=8\) ，我们只需要3个 bit 就能发送8种天气。在计算机中对于任意n种分类情况，我们只需要 \(log_2 (n)\) 长度的编码信息就可以把所有的情况进行编码。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/entropy2.png&quot; alt=&quot;c&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;信息熵&quot;&gt;信息熵&lt;/h3&gt;
+
+&lt;p&gt;我们知道在现实中，第二天出现什么天气的概率不是均等的，在夏天出现晴天和雨天的概率比较大，而出现雪天的概率很小；而在冬天出现雨天的概率较小，出现雪天的概率较大。在第一个例子中如果晴天的概率是 75%， 雨天的概率是 25%，那么消息的长度应该是多少呢？在计算消息长度之前，我们需要先介绍“熵减因子”(reduction factor)的概念。按照香农在论文中提出：&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;每发送1个bit的有效信息，能减少了接收者2个因子的不确定性。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;strong&gt;熵减因子&lt;/strong&gt; m 与有&lt;strong&gt;效消息长度&lt;/strong&gt; u 之间的关系是： \(2^u=m\)&lt;/p&gt;
+
+&lt;p&gt;在已知事件概率的情况下，熵减因子 m 与概率 p 的关系是： \(\frac{1}{p}=m\)&lt;/p&gt;
+
+&lt;p&gt;基于熵减因子与概率的关系，我们可以根据概率 p 推断出有效信息的长度 u 的关系:  \(-log_2{p} = u\)&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/entropy4.png&quot; alt=&quot;wheather_4&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;现在我们可以回答之前提出的问题了。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;晴天的有效信息长度&lt;/strong&gt;  \(m_s = -log_2{p_s} = -log_2{0.75} = 0.41\)&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;雨天的有效信息长度&lt;/strong&gt; \(m_r = -log_2{p_r} = -log_2{0.25} = 2\)&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;平均有效信息长度&lt;/strong&gt; \(m_{avg} = p_s * (-log_2{p_s}) + p_r * (-log_2{p_r}) = 0.75 * 0.41 + 0.25 * 2 = 0.81\)&lt;/p&gt;
+
+&lt;p&gt;平均有效信息长度又被称为&lt;strong&gt;信息熵&lt;/strong&gt; , 数学定义为：&lt;/p&gt;
+
+\[\text{Entropy},H(p) = - \sum{p(i)*log(p(i))}\]
+
+&lt;p&gt;我们按照现实情况，分别给第二个例子中8种天气加一个概率。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/entropy3.png&quot; alt=&quot;weather_8_prob&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;按照信息熵的定义，我们可以计算出此时的信息熵：&lt;/p&gt;
+
+\[\begin{aligned} 
+\text{Entropy} &amp;amp; = -0.35 * log_2{0.35} -0.35 * log_2{0.35} \\
+ &amp;amp; -0.10 * log_2{0.10} -0.10 * log_2{0.10} \\
+ &amp;amp; -0.04 * log_2{0.04} -0.04 * log_2{0.04} \\
+ &amp;amp; -0.01 * log_2{0.01} -0.01 * log_2{0.01} \\
+ &amp;amp; = 2.23
+\end{aligned}\]
+
+&lt;p&gt;&lt;strong&gt;信息熵是理论上最小的平均消息长度&lt;/strong&gt;。&lt;/p&gt;
+
+&lt;h3 id=&quot;交叉熵&quot;&gt;交叉熵&lt;/h3&gt;
+
+&lt;p&gt;通过信息熵公式我们可以计算出，理论上发送信息的最小平均长度是 2.23，上图因为多所有天气都按照3位进行编码，所以消息的平均长度是3。通过修改信息的编码方式，我们可以降低消息的平均长度。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/_site/assets/entropy5.png&quot; alt=&quot;weather_9_prob&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;通过减小高概率天气的消息长度，增长低概率天气的消息长度，我们可以降低平均的消息长度。
+\(0.35 * 2 + 0.35 * 2 + 0.1 * 3+ 0.1 * 3 + 0.04 * 4 + 0.04 * 4  + 0.01 * 4 + 0.01 * 5 = 2.42\)
+&lt;img src=&quot;/_site/assets/entropy6.png&quot; alt=&quot;weather_10_prob&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;如果我们反过来增长低概率天气的消息长度，减小大概率天气的长度，那么消息的平均长度增大。
+\(0.01 * 2 + 0.01 * 2 + 0.04 * 3 + 0.04 * 3 + 0.1 * 4 + 0.1 * 4 + 0.35 * 5 + 0.35 * 5 = 4.58\)&lt;/p&gt;
+
+&lt;p&gt;上面两个例子中，我们计算信息平均长度时，是用真实的天气概率乘以我们&lt;strong&gt;给定的有效信息长度&lt;/strong&gt;， 上面计算结果叫做&lt;strong&gt;交叉熵&lt;/strong&gt;。&lt;/p&gt;
+
+&lt;p&gt;在已知各种情况天气的概率下，可以通过信息熵的公式计算出理论上最小的平均信息长度。但是在现实生活中，我们经常是不知道各种情况的实际概率分布的。在这种情况下，我们可以预先给出一个对于真实概率分布的一个估计（在上面的例子是预先给出一个信息长度）。
+&lt;img src=&quot;/_site/assets/entropy7.png&quot; alt=&quot;weather_11_prob&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;图中红色的概率代表天气的真实分布，而蓝色概率代表按照编码长度推算出来的对于天气概率的估计。真实的概率分布于估计概率分布之间的关系可以用&lt;strong&gt;交叉熵&lt;/strong&gt;的形式表达出来。&lt;/p&gt;
+
+&lt;p&gt;\(\text{CrossEntropy,}H(p,q) = - \sum{p(i)log(q(i))}\)
+通过前面的内容我们可以知道，只有&lt;strong&gt;估计概率越接近于真正的概率，交叉熵才会越小，当估计概率等于真实概率时，交叉熵等于信息熵。&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;交叉熵公式于信息熵公式的不同之处在于，将 log 部分的概率分布替换成了&lt;strong&gt;预测概率分布&lt;/strong&gt;。&lt;strong&gt;交叉熵大于信息熵的部分叫做Kullback-Leibler Divergence（KL散度）也叫相对熵（Relative Entropy）&lt;/strong&gt;。
+\(\begin{aligned}
+\text{KL-Divergence} &amp;amp;= \text{Entropy} - \text{CrossEntropy}  \\
+D_{KL}(p||q) &amp;amp; = H(p,q) - H(p) \\
+&amp;amp; = -\sum_i{p_ilog(q_i)} - (-\sum_i{p_ilog(p_i)}) \\
+&amp;amp; = -\sum_i{p_ilog(q_i)} + \sum_i{p_ilog(p_i)} \\
+&amp;amp; = \sum_i{p_i log(\frac{p_i}{q_i})}
+\end{aligned}\)&lt;/p&gt;
+
+&lt;h2 id=&quot;交叉熵在机器学习中的应用&quot;&gt;交叉熵在机器学习中的应用&lt;/h2&gt;
+
+&lt;p&gt;由于交叉熵的性质，所以在机器学习中，交叉熵被广泛的作为&lt;strong&gt;分类损失函数&lt;/strong&gt;。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/_site/assets/ce_loss.png&quot; alt=&quot;ce_loss&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;在一个分类任务的训练过程中，我们已知目标的真实概率分布，分类器在每次的训练过程中会给出一个预测的概率分布。我们把&lt;strong&gt;交叉熵&lt;/strong&gt;作为我们的目标函数，优化的方向是使得目标函数（交叉熵）最小，交叉熵只有在预测概率分布于真实概率分布一致的情况下最小，所以交叉熵非常适合作为分类任务的损失函数。&lt;/p&gt;
+
+&lt;p&gt;在信息论中&lt;strong&gt;信息熵&lt;/strong&gt;，&lt;strong&gt;交叉熵&lt;/strong&gt;公式中的 log 都是以 2 为底的对数，但是在机器学习中代码实现中，无论是用以10为底或者e为底都无所谓，因为对数都可以通过换底公式进行变换： \(log_e{n} = \frac{log_2{n}}{log_2{e}}\) ，因为分母始终是一个常数所以对于损失函数没有影响。&lt;/p&gt;
+
+&lt;p&gt;信息熵原本作为信息论的一个重要概念，没有想到在多年以后会在机器学习中继续大放异彩。希望通过本文的内容能理解&lt;strong&gt;交叉熵损失函数&lt;/strong&gt;真正的意义。本文是根据文章 &lt;a href=&quot;https://towardsdatascience.com/entropy-cross-entropy-and-kl-divergence-explained-b09cdae917a&quot;&gt;Entropy, Cross-Entropy, and KL-Divergence Explained!&lt;/a&gt; 进行的改写，读者可以阅读原文获得跟多关于交叉熵的认识。&lt;/p&gt;</content><author><name></name></author><category term="machinelearning" /><category term="math" /><summary type="html">机器学习中的交叉熵</summary></entry><entry><title type="html">pkg-config 入门</title><link href="https://mengman.github.io/c++/linux/2020/07/26/pkg-config-introduction.html" rel="alternate" type="text/html" title="pkg-config 入门" /><published>2020-07-26T00:41:00+08:00</published><updated>2020-07-26T00:41:00+08:00</updated><id>https://mengman.github.io/c++/linux/2020/07/26/pkg-config-introduction</id><content type="html" xml:base="https://mengman.github.io/c++/linux/2020/07/26/pkg-config-introduction.html">&lt;h1 id=&quot;pkg-config-入门&quot;&gt;pkg-config 入门&lt;/h1&gt;
 
 &lt;p&gt;pkg-config 是类 Unix 操作系统上的一个库查询工具。它通过 .pc 文件来查询当前系统上已安装类库的信息。&lt;/p&gt;
 
@@ -451,7 +555,58 @@ Pocket算法的运算量大：对于比PLA，在得到新的w&lt;sub&gt;t+1&lt;/
 
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;到现在我们就差不多完成了对于代码的优化。&lt;/p&gt;</content><author><name></name></author><category term="designpattern" /><category term="softwareengineering" /><summary type="html">功能开关 本文受到 Pete Hodgson 的文章 Feature Toggles (aka Feature Flags) 启发，原文内容比本文更加丰富。</summary></entry><entry><title type="html">Large Kernel Matters - Improve Semantic Segmentation by Global Convolutional Network</title><link href="https://mengman.github.io/machinelearning/deeplearning/math/2019/07/29/Large-Kernel-Matters-Improve-Semantic-Segmentation-by-Global-Convolutional-Network.html" rel="alternate" type="text/html" title="Large Kernel Matters - Improve Semantic Segmentation by Global Convolutional Network" /><published>2019-07-29T17:26:21+08:00</published><updated>2019-07-29T17:26:21+08:00</updated><id>https://mengman.github.io/machinelearning/deeplearning/math/2019/07/29/Large-Kernel-Matters-Improve-Semantic-Segmentation-by-Global-Convolutional-Network</id><content type="html" xml:base="https://mengman.github.io/machinelearning/deeplearning/math/2019/07/29/Large-Kernel-Matters-Improve-Semantic-Segmentation-by-Global-Convolutional-Network.html">&lt;p&gt;&lt;strong&gt;论文题目:&lt;/strong&gt; Large Kernel Matters - Improve Semantic Segmentation by Global Convolutional Network&lt;/p&gt;
+&lt;p&gt;到现在我们就差不多完成了对于代码的优化。&lt;/p&gt;</content><author><name></name></author><category term="designpattern" /><category term="softwareengineering" /><summary type="html">功能开关 本文受到 Pete Hodgson 的文章 Feature Toggles (aka Feature Flags) 启发，原文内容比本文更加丰富。</summary></entry><entry><title type="html">Python 依赖管理软件 Poetry 上手</title><link href="https://mengman.github.io/designpattern/softwareengineering/2020/04/20/Python-Poetry-In-Action.html" rel="alternate" type="text/html" title="Python 依赖管理软件 Poetry 上手" /><published>2020-04-20T17:26:21+08:00</published><updated>2020-04-20T17:26:21+08:00</updated><id>https://mengman.github.io/designpattern/softwareengineering/2020/04/20/Python-Poetry-In-Action</id><content type="html" xml:base="https://mengman.github.io/designpattern/softwareengineering/2020/04/20/Python-Poetry-In-Action.html">&lt;h2 id=&quot;python-项目管理-poetry-上手&quot;&gt;Python 项目管理 Poetry 上手&lt;/h2&gt;
+
+&lt;p&gt;Python 项目依赖管理工具有 virtualenv pipenv anaconda，来帮助项目做到项目之间的环境隔离，依赖管理等。今天介绍的 Poetry 是它更像是 Python 项目 CLI 工具，能够进行项目模板创建，依赖管理，项目构建与发布等。Poetry v0.1.0 版本发布2018-02，到现在两年的时间，目前社区比较活跃。&lt;/p&gt;
+
+&lt;h3 id=&quot;poetry-配置&quot;&gt;Poetry 配置&lt;/h3&gt;
+
+&lt;h4 id=&quot;1--安装&quot;&gt;1  安装&lt;/h4&gt;
+
+&lt;p&gt;OSX / Linux / bashonwindows 使用脚本自动安装&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;curl &lt;span class=&quot;nt&quot;&gt;-sSL&lt;/span&gt; https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;在类 *nix 的系统中 Poetry 会默认安装在 &lt;code&gt;$HOME/.poetry/bin &lt;/code&gt; 中， 在window系统下默认安装目录为 &lt;code&gt;%USERPROFILE%\.poetry\bin&lt;/code&gt;。&lt;/p&gt;
+
+&lt;p&gt;如果要修改安装目录，需要在运行安装脚本时通过环境变量 &lt;code&gt;POETRY_HOME&lt;/code&gt; 来指定。 使用参数 &lt;code&gt;--version&lt;/code&gt; 或者环境变量 &lt;code&gt;POETRY_VERSION&lt;/code&gt; 可以指定安装版本。&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;POETRY_HOME&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/etc/poetry python get-poetry.py &lt;span class=&quot;nt&quot;&gt;--version&lt;/span&gt; 1.0.5
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h4 id=&quot;2-安装检查&quot;&gt;2. 安装检查&lt;/h4&gt;
+
+&lt;p&gt;安装成功后检查 poetry 版本&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;poetry &lt;span class=&quot;nt&quot;&gt;--version&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;如果无法找到  &lt;code&gt;poetry&lt;/code&gt; 命令， 那么记得把安装目录加到 $PATH 中。&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;export&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$PATH&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$HOME&lt;/span&gt;/.poetry/bin:&lt;span class=&quot;nv&quot;&gt;$PATH&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h4 id=&quot;3更新卸载-poetry&quot;&gt;3.更新&amp;amp;卸载 Poetry&lt;/h4&gt;
+
+&lt;p&gt;更新 Poetry&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# 更新到最新的稳定版本&lt;/span&gt;
+poetry self update
+
+&lt;span class=&quot;c&quot;&gt;# 更新到预览版本&lt;/span&gt;
+poetry self udpate &lt;span class=&quot;nt&quot;&gt;--preview&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# 更新到指定版本&lt;/span&gt;
+poetry self update 1.0.5
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;卸载 Poetry&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;python get-poetry.py &lt;span class=&quot;nt&quot;&gt;--uninstall&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;基本用法&quot;&gt;基本用法&lt;/h3&gt;</content><author><name></name></author><category term="designpattern" /><category term="softwareengineering" /><summary type="html">Python 项目管理 Poetry 上手</summary></entry><entry><title type="html">Large Kernel Matters - Improve Semantic Segmentation by Global Convolutional Network</title><link href="https://mengman.github.io/machinelearning/deeplearning/math/2019/07/29/Large-Kernel-Matters-Improve-Semantic-Segmentation-by-Global-Convolutional-Network.html" rel="alternate" type="text/html" title="Large Kernel Matters - Improve Semantic Segmentation by Global Convolutional Network" /><published>2019-07-29T17:26:21+08:00</published><updated>2019-07-29T17:26:21+08:00</updated><id>https://mengman.github.io/machinelearning/deeplearning/math/2019/07/29/Large-Kernel-Matters-Improve-Semantic-Segmentation-by-Global-Convolutional-Network</id><content type="html" xml:base="https://mengman.github.io/machinelearning/deeplearning/math/2019/07/29/Large-Kernel-Matters-Improve-Semantic-Segmentation-by-Global-Convolutional-Network.html">&lt;p&gt;&lt;strong&gt;论文题目:&lt;/strong&gt; Large Kernel Matters - Improve Semantic Segmentation by Global Convolutional Network&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;论文内容:&lt;/strong&gt; 使用全局卷积网络(GCN)解决分割模型中分类与分割任务冲突的问题，使用Boundary Refinement block 提升物体边缘的分割能力。&lt;/p&gt;
 
