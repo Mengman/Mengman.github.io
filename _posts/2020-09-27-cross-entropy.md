@@ -98,12 +98,17 @@ $$
 
 图中红色的概率代表天气的真实分布，而蓝色概率代表按照编码长度推算出来的对于天气概率的估计。真实的概率分布于估计概率分布之间的关系可以用**交叉熵**的形式表达出来。
 
+
 $$
 \text{CrossEntropy,}H(p,q) = - \sum{p(i)log(q(i))}
 $$
+
+
 通过前面的内容我们可以知道，只有**估计概率越接近于真正的概率，交叉熵才会越小，当估计概率等于真实概率时，交叉熵等于信息熵。**
 
 交叉熵公式于信息熵公式的不同之处在于，将 log 部分的概率分布替换成了**预测概率分布**。**交叉熵大于信息熵的部分叫做Kullback-Leibler Divergence（KL散度）也叫相对熵（Relative Entropy）**。
+
+
 $$
 \begin{aligned}
 \text{KL-Divergence} &= \text{Entropy} - \text{CrossEntropy}  \\
