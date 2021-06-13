@@ -1,4 +1,97 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.1.1">Jekyll</generator><link href="https://mengman.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://mengman.github.io/" rel="alternate" type="text/html" /><updated>2021-01-03T22:44:38+08:00</updated><id>https://mengman.github.io/feed.xml</id><title type="html">Mengman的异想世界</title><subtitle>Program 4 Fun/n Program 4 Life</subtitle><entry><title type="html">机器学习中的交叉熵</title><link href="https://mengman.github.io/machinelearning/math/2020/09/27/cross-entropy.html" rel="alternate" type="text/html" title="机器学习中的交叉熵" /><published>2020-09-27T14:11:00+08:00</published><updated>2020-09-27T14:11:00+08:00</updated><id>https://mengman.github.io/machinelearning/math/2020/09/27/cross-entropy</id><content type="html" xml:base="https://mengman.github.io/machinelearning/math/2020/09/27/cross-entropy.html">&lt;h1 id=&quot;机器学习中的交叉熵&quot;&gt;机器学习中的交叉熵&lt;/h1&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.1.1">Jekyll</generator><link href="https://mengman.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://mengman.github.io/" rel="alternate" type="text/html" /><updated>2021-06-14T01:23:40+08:00</updated><id>https://mengman.github.io/feed.xml</id><title type="html">Mengman的异想世界</title><subtitle>Program 4 Fun/n Program 4 Life</subtitle><entry><title type="html">机器学习项目基础设施</title><link href="https://mengman.github.io/matchinelearning/deeplearning/softwareenginer/2021/06/14/machine-learning-infrastructures.html" rel="alternate" type="text/html" title="机器学习项目基础设施" /><published>2021-06-14T00:00:00+08:00</published><updated>2021-06-14T00:00:00+08:00</updated><id>https://mengman.github.io/matchinelearning/deeplearning/softwareenginer/2021/06/14/machine-learning-infrastructures</id><content type="html" xml:base="https://mengman.github.io/matchinelearning/deeplearning/softwareenginer/2021/06/14/machine-learning-infrastructures.html">&lt;h1 id=&quot;机器学习项目基础设施&quot;&gt;机器学习项目基础设施&lt;/h1&gt;
+
+&lt;p&gt;机器学习过程可以大体上分为三个部分数据管理、模型训练与生产部署。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/ml_infrastructure.png&quot; alt=&quot;ml_infrastructure&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;图片来自课程 &lt;a href=&quot;[Lecture 6: Infrastructure &amp;amp; Tooling - Full Stack Deep Learning](https://fullstackdeeplearning.com/spring2021/lecture-6/)&quot;&gt;Full Stack Deep Learning&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;数据管理&quot;&gt;数据管理&lt;/h2&gt;
+
+&lt;h3 id=&quot;数据源sources&quot;&gt;数据源(sources)&lt;/h3&gt;
+
+&lt;p&gt;数据源负责数据的存储与数据格式，常用的存储方式包括本地的文件系统、服务器上的对象存储。常用的数据格式有HDF5、Parquet 等。&lt;/p&gt;
+
+&lt;h3 id=&quot;数据湖数据仓库&quot;&gt;数据湖/数据仓库&lt;/h3&gt;
+
+&lt;p&gt;负责管理记录数据集，常见的数据湖软件/服务包括有：snowflake、databricks&lt;/p&gt;
+
+&lt;h3 id=&quot;数据处理&quot;&gt;数据处理&lt;/h3&gt;
+
+&lt;p&gt;数据处理有很多并行计算的框架&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;apache airflow：由 Airbnb 开源的计算框架，可以用来构建 DAG 计算图，实现数据的细粒度并行处理。&lt;/li&gt;
+  &lt;li&gt;spark：老牌数据流处理框架，支持 Java、Python 在内的多种语言。&lt;/li&gt;
+  &lt;li&gt;Dagster：和 airflow 一样也是一个数据计算的编排框架&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;数据分析&quot;&gt;数据分析&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;pandas：最常用的数据处理框架&lt;/li&gt;
+  &lt;li&gt;rapis: 基本上就是支持 GPU 计算的pandas&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;版本控制&quot;&gt;版本控制&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;DVC：全名叫 Data version control，专门负责数据版本控制还有模型版本控制的工具，它的操作基于git，通过对大文件的管理来实现版本控制。&lt;/li&gt;
+  &lt;li&gt;Pachyderm:  Pachyderm 不只是单纯的数据版本控制，还提供了数据生成pipeline的管理。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;模型训练&quot;&gt;模型训练&lt;/h2&gt;
+
+&lt;h3 id=&quot;计算设备服务&quot;&gt;计算设备&amp;amp;服务&lt;/h3&gt;
+
+&lt;p&gt;本地的计算设备、各种云计算服务&lt;/p&gt;
+
+&lt;h3 id=&quot;资源管理&quot;&gt;资源管理&lt;/h3&gt;
+
+&lt;p&gt;Docke、sdetermined AI 等&lt;/p&gt;
+
+&lt;h3 id=&quot;计算框架分布式训练框架&quot;&gt;计算框架&amp;amp;分布式训练框架&lt;/h3&gt;
+
+&lt;p&gt;深度学习框架：Pytorch、 tensorflow&lt;/p&gt;
+
+&lt;p&gt;深度学习库：&lt;a href=&quot;http://fast.ai&quot;&gt;fast.ai&lt;/a&gt;、keras&lt;/p&gt;
+
+&lt;p&gt;分布式计算框架：RAY 等&lt;/p&gt;
+
+&lt;h3 id=&quot;实验管理&quot;&gt;实验管理&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;TensorBoard：tensorflow 的可视化实验管理模块，现在独立出来，甚至 pytorch 都对他进行了支持。但是它没有对多个实验的管理能力。&lt;/li&gt;
+  &lt;li&gt;mlflow：是一款开源的试验管理工具，最大的特点是提供本地的实验管理功能，没有各种收费的云服务版本。&lt;/li&gt;
+  &lt;li&gt;weights &amp;amp; biases: 是一款综合的实验管理工具，它除了提供实验追踪，还提供了数据可视化、模型调优等功能。但是 W&amp;amp;B 是一款基于网络服务的实验管理工具。&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://Neptune.ai&quot;&gt;Neptune.ai&lt;/a&gt; &lt;a href=&quot;http://comet.ml&quot;&gt;comet.ml&lt;/a&gt;:  也是基于网络服务的实验管理工具。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;超参调试&quot;&gt;超参调试&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;SIGOPT&lt;/li&gt;
+  &lt;li&gt;Determined AI&lt;/li&gt;
+  &lt;li&gt;Weight &amp;amp; Biases&lt;/li&gt;
+  &lt;li&gt;Tune&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;模型部署&quot;&gt;模型部署&lt;/h2&gt;
+
+&lt;h3 id=&quot;ci测试&quot;&gt;CI&amp;amp;测试&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Jenkins&lt;/li&gt;
+  &lt;li&gt;Gitlab CI&lt;/li&gt;
+  &lt;li&gt;Circle CI&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;边缘设备部署&quot;&gt;边缘设备部署&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Nvidia TensorRT&lt;/li&gt;
+  &lt;li&gt;TensorFlow Lite&lt;/li&gt;
+&lt;/ul&gt;</content><author><name></name></author><category term="matchinelearning" /><category term="deeplearning" /><category term="softwareenginer" /><summary type="html">机器学习项目基础设施 机器学习过程可以大体上分为三个部分数据管理、模型训练与生产部署。 图片来自课程 Full Stack Deep Learning 数据管理 数据源(sources) 数据源负责数据的存储与数据格式，常用的存储方式包括本地的文件系统、服务器上的对象存储。常用的数据格式有HDF5、Parquet 等。 数据湖/数据仓库 负责管理记录数据集，常见的数据湖软件/服务包括有：snowflake、databricks 数据处理 数据处理有很多并行计算的框架 apache airflow：由 Airbnb 开源的计算框架，可以用来构建 DAG 计算图，实现数据的细粒度并行处理。 spark：老牌数据流处理框架，支持 Java、Python 在内的多种语言。 Dagster：和 airflow 一样也是一个数据计算的编排框架 数据分析 pandas：最常用的数据处理框架 rapis: 基本上就是支持 GPU 计算的pandas 版本控制 DVC：全名叫 Data version control，专门负责数据版本控制还有模型版本控制的工具，它的操作基于git，通过对大文件的管理来实现版本控制。 Pachyderm: Pachyderm 不只是单纯的数据版本控制，还提供了数据生成pipeline的管理。 模型训练 计算设备&amp;amp;服务 本地的计算设备、各种云计算服务 资源管理 Docke、sdetermined AI 等 计算框架&amp;amp;分布式训练框架 深度学习框架：Pytorch、 tensorflow 深度学习库：fast.ai、keras 分布式计算框架：RAY 等 实验管理 TensorBoard：tensorflow 的可视化实验管理模块，现在独立出来，甚至 pytorch 都对他进行了支持。但是它没有对多个实验的管理能力。 mlflow：是一款开源的试验管理工具，最大的特点是提供本地的实验管理功能，没有各种收费的云服务版本。 weights &amp;amp; biases: 是一款综合的实验管理工具，它除了提供实验追踪，还提供了数据可视化、模型调优等功能。但是 W&amp;amp;B 是一款基于网络服务的实验管理工具。 Neptune.ai comet.ml: 也是基于网络服务的实验管理工具。 超参调试 SIGOPT Determined AI Weight &amp;amp; Biases Tune 模型部署 CI&amp;amp;测试 Jenkins Gitlab CI Circle CI 边缘设备部署 Nvidia TensorRT TensorFlow Lite</summary></entry><entry><title type="html">机器学习中的交叉熵</title><link href="https://mengman.github.io/machinelearning/math/2020/09/27/cross-entropy.html" rel="alternate" type="text/html" title="机器学习中的交叉熵" /><published>2020-09-27T14:11:00+08:00</published><updated>2020-09-27T14:11:00+08:00</updated><id>https://mengman.github.io/machinelearning/math/2020/09/27/cross-entropy</id><content type="html" xml:base="https://mengman.github.io/machinelearning/math/2020/09/27/cross-entropy.html">&lt;h1 id=&quot;机器学习中的交叉熵&quot;&gt;机器学习中的交叉熵&lt;/h1&gt;
 
 &lt;p&gt;交叉熵损失函数是机器学习分类问题中最常用的一个损失函数。但是很多人对于“交叉熵”的概念缺乏理解。本文的目的是希望能够通俗易懂的解释清楚 “熵”， “交叉熵” 和 “KL-散度” 这三个相关的概念。&lt;/p&gt;
 
