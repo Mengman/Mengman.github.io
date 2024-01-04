@@ -1,0 +1,14 @@
+I"�
+<ul>
+  <li><a href="#1-编译流程">1 编译流程</a></li>
+  <li><a href="#2-ptx">2 PTX</a></li>
+  <li><a href="#3-jit-编译">3 JIT 编译</a></li>
+  <li><a href="#4-编译参数-arch--code">4 编译参数 arch &amp; code</a>
+    <ul>
+      <li><a href="#gpu-architecture-arch">–gpu-architecture(-arch)</a></li>
+      <li><a href="#gpu-code-code">–gpu-code(-code)</a></li>
+      <li><a href="#胖二进制fat-binaries">胖二进制(Fat Binaries)</a></li>
+    </ul>
+  </li>
+</ul>
+:ET

@@ -1,0 +1,29 @@
+I"	<p><strong>论文题目:</strong> Large Kernel Matters - Improve Semantic Segmentation by Global Convolutional Network</p>
+
+<p><strong>论文内容:</strong> 使用全局卷积网络(GCN)解决分割模型中分类与分割任务冲突的问题，使用Boundary Refinement block 提升物体边缘的分割能力。</p>
+
+<h1 id="论文亮点">论文亮点</h1>
+
+<blockquote>
+  <ol>
+    <li>Classification and localization are two naturally contradictory tasks. For the classification task, the models are required to be invariant to various transformations like translation and rotation. But for localization task, models should be transformation-sensitive, precisely locate every pixel for each semantic category.</li>
+  </ol>
+</blockquote>
+
+<h1 id="approach">Approach</h1>
+
+<h2 id="global-convolutional-network">Global Convolutional Network</h2>
+
+<p>GCN 的目的是同时满足在分割网络中对于分类和定位的需求。从定位任务的要求来说网络结构是一个不包含全连接和全局池化的全卷积结构，因为全局池化会抹去定位信息；从分类角度来说网络需要稠密连接结构，所以卷积核的尺寸应该尽可能的大。</p>
+
+<p><img src="/assets/1560924841688.png" alt="1560924841688" /></p>
+
+<p>GCN中使用 1×k + k×1 的卷积核来代替 k×k的卷积核降低计算量。</p>
+
+<h2 id="boundary-refinement">Boundary Refinement</h2>
+
+<p>BR 块是一种残差结构，用于优化物体边缘分割的能力</p>
+
+<p><img src="/assets/1560925157354.png" alt="1560925157354" /></p>
+
+:ET
