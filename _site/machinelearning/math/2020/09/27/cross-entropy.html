@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>机器学习中的交叉熵 | Mengman的异想世界</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="机器学习中的交叉熵" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="机器学习中的交叉熵" />
+<meta property="og:description" content="机器学习中的交叉熵" />
+<link rel="canonical" href="http://localhost:4000/machinelearning/math/2020/09/27/cross-entropy.html" />
+<meta property="og:url" content="http://localhost:4000/machinelearning/math/2020/09/27/cross-entropy.html" />
+<meta property="og:site_name" content="Mengman的异想世界" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-09-27T14:11:00+08:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="机器学习中的交叉熵" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2020-09-27T14:11:00+08:00","datePublished":"2020-09-27T14:11:00+08:00","description":"机器学习中的交叉熵","headline":"机器学习中的交叉熵","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/machinelearning/math/2020/09/27/cross-entropy.html"},"url":"http://localhost:4000/machinelearning/math/2020/09/27/cross-entropy.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="assets/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Mengman的异想世界" /></head><body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Mengman的异想世界</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">机器学习中的交叉熵</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2020-09-27T14:11:00+08:00" itemprop="datePublished">Sep 27, 2020
+      </time></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul>
+  <li><a href="#机器学习中的交叉熵">机器学习中的交叉熵</a>
+    <ul>
+      <li><a href="#信息论中的熵">信息论中的“熵”</a>
+        <ul>
+          <li><a href="#有效信息长度">有效信息长度</a></li>
+          <li><a href="#信息熵">信息熵</a></li>
+          <li><a href="#交叉熵">交叉熵</a></li>
+        </ul>
+      </li>
+      <li><a href="#交叉熵在机器学习中的应用">交叉熵在机器学习中的应用</a></li>
+    </ul>
+  </li>
+</ul>
+
+    <h1 id="机器学习中的交叉熵">机器学习中的交叉熵</h1>
+
+<p>交叉熵损失函数是机器学习分类问题中最常用的一个损失函数。但是很多人对于“交叉熵”的概念缺乏理解。本文的目的是希望能够通俗易懂的解释清楚 “熵”， “交叉熵” 和 “KL-散度” 这三个相关的概念。</p>
+
+<h2 id="信息论中的熵">信息论中的“熵”</h2>
+
+<p>“熵” (entropy) 这个概念在热力学中表示一个系统的无序程度，熵越大系统就越混乱。1948年香农在其发表的《通信的数学理论》论文中给出了”信息熵“的定义：信息熵是随机事件不确定性的度量。信息熵与热力学熵有着紧密的内在联系，不过在本文中所讨论的熵都是指信息熵。</p>
+
+<h3 id="有效信息长度">有效信息长度</h3>
+
+<p>为了能更好的解释信息熵，我们先来看一个例子。有一个气象监测站，通过检测某地的气象数据，能给出第二天的天气预测。气象站需要将预测结果网络发送给气象中心。如果当地只有两种天气一种是晴天，一种是雨天，那么气象站如何能够高效的发送预测结果呢？最简单的情况下，气象站可以将预测结果以汉字的形式发送出去。如果预测是晴天就发送”晴天“，如果是雨天就发送”雨天“。我们知道一个汉字在计算机中通常的编码长度是 2 byte，也就是 8 bit，那么这两个汉字就是 16 bit。为了能更高效的发送信息，我们可以对信息进行编码，用 0 来表示晴天，1 来表示雨天。那么我们需要发送的信息长度就只有 1 bit 了。对于原来长度为 16 bit 的信息来说，它<strong>真正有效的信息长度</strong>其实只有 1 bit。</p>
+
+<p><img src="/assets/entropy1.png" alt="weather_2" /></p>
+
+<p>那如果当地天气有8种情况，我们需要多少长度的消息才能发送预测结果呢？答案很简单：\(2^3=8\) ，我们只需要3个 bit 就能发送8种天气。在计算机中对于任意n种分类情况，我们只需要 \(log_2 (n)\) 长度的编码信息就可以把所有的情况进行编码。</p>
+
+<p><img src="/assets/entropy2.png" alt="c" /></p>
+
+<h3 id="信息熵">信息熵</h3>
+
+<p>我们知道在现实中，第二天出现什么天气的概率不是均等的，在夏天出现晴天和雨天的概率比较大，而出现雪天的概率很小；而在冬天出现雨天的概率较小，出现雪天的概率较大。在第一个例子中如果晴天的概率是 75%， 雨天的概率是 25%，那么消息的长度应该是多少呢？在计算消息长度之前，我们需要先介绍“熵减因子”(reduction factor)的概念。按照香农在论文中提出：</p>
+
+<blockquote>
+  <p>每发送1个bit的有效信息，能减少了接收者2个因子的不确定性。</p>
+</blockquote>
+
+<p><strong>熵减因子</strong> m 与有<strong>效消息长度</strong> u 之间的关系是： \(2^u=m\)</p>
+
+<p>在已知事件概率的情况下，熵减因子 m 与概率 p 的关系是： \(\frac{1}{p}=m\)</p>
+
+<p>基于熵减因子与概率的关系，我们可以根据概率 p 推断出有效信息的长度 u 的关系:  \(-log_2{p} = u\)</p>
+
+<p><img src="/assets/entropy4.png" alt="wheather_4" /></p>
+
+<p>现在我们可以回答之前提出的问题了。</p>
+
+<p><strong>晴天的有效信息长度</strong>  \(m_s = -log_2{p_s} = -log_2{0.75} = 0.41\)</p>
+
+<p><strong>雨天的有效信息长度</strong> \(m_r = -log_2{p_r} = -log_2{0.25} = 2\)</p>
+
+<p><strong>平均有效信息长度</strong> \(m_{avg} = p_s * (-log_2{p_s}) + p_r * (-log_2{p_r}) = 0.75 * 0.41 + 0.25 * 2 = 0.81\)</p>
+
+<p>平均有效信息长度又被称为<strong>信息熵</strong> , 数学定义为：</p>
+
+\[\text{Entropy},H(p) = - \sum{p(i)*log(p(i))}\]
+
+<p>我们按照现实情况，分别给第二个例子中8种天气加一个概率。</p>
+
+<p><img src="/assets/entropy3.png" alt="weather_8_prob" /></p>
+
+<p>按照信息熵的定义，我们可以计算出此时的信息熵：</p>
+
+\[\begin{aligned} 
+\text{Entropy} &amp; = -0.35 * log_2{0.35} -0.35 * log_2{0.35} \\
+ &amp; -0.10 * log_2{0.10} -0.10 * log_2{0.10} \\
+ &amp; -0.04 * log_2{0.04} -0.04 * log_2{0.04} \\
+ &amp; -0.01 * log_2{0.01} -0.01 * log_2{0.01} \\
+ &amp; = 2.23
+\end{aligned}\]
+
+<p><strong>信息熵是理论上最小的平均消息长度</strong>。</p>
+
+<h3 id="交叉熵">交叉熵</h3>
+
+<p>通过信息熵公式我们可以计算出，理论上发送信息的最小平均长度是 2.23，上图因为多所有天气都按照3位进行编码，所以消息的平均长度是3。通过修改信息的编码方式，我们可以降低消息的平均长度。</p>
+
+<p><img src="/assets/entropy5.png" alt="weather_9_prob" /></p>
+
+<p>通过减小高概率天气的消息长度，增长低概率天气的消息长度，我们可以降低平均的消息长度。
+\(0.35 * 2 + 0.35 * 2 + 0.1 * 3+ 0.1 * 3 + 0.04 * 4 + 0.04 * 4  + 0.01 * 4 + 0.01 * 5 = 2.42\)
+<img src="/assets/entropy6.png" alt="weather_10_prob" /></p>
+
+<p>如果我们反过来增长低概率天气的消息长度，减小大概率天气的长度，那么消息的平均长度增大。
+\(0.01 * 2 + 0.01 * 2 + 0.04 * 3 + 0.04 * 3 + 0.1 * 4 + 0.1 * 4 + 0.35 * 5 + 0.35 * 5 = 4.58\)</p>
+
+<p>上面两个例子中，我们计算信息平均长度时，是用真实的天气概率乘以我们<strong>给定的有效信息长度</strong>， 上面计算结果叫做<strong>交叉熵</strong>。</p>
+
+<p>在已知各种情况天气的概率下，可以通过信息熵的公式计算出理论上最小的平均信息长度。但是在现实生活中，我们经常是不知道各种情况的实际概率分布的。在这种情况下，我们可以预先给出一个对于真实概率分布的一个估计（在上面的例子是预先给出一个信息长度）。
+<img src="/assets/entropy7.png" alt="weather_11_prob" /></p>
+
+<p>图中红色的概率代表天气的真实分布，而蓝色概率代表按照编码长度推算出来的对于天气概率的估计。真实的概率分布于估计概率分布之间的关系可以用<strong>交叉熵</strong>的形式表达出来。</p>
+
+\[\text{CrossEntropy,}H(p,q) = - \sum{p(i)log(q(i))}\]
+
+<p>通过前面的内容我们可以知道，只有<strong>估计概率越接近于真正的概率，交叉熵才会越小，当估计概率等于真实概率时，交叉熵等于信息熵。</strong></p>
+
+<p>交叉熵公式于信息熵公式的不同之处在于，将 log 部分的概率分布替换成了<strong>预测概率分布</strong>。<strong>交叉熵大于信息熵的部分叫做Kullback-Leibler Divergence（KL散度）也叫相对熵（Relative Entropy）</strong>。</p>
+
+\[\begin{aligned}
+\text{KL-Divergence} &amp;= \text{Entropy} - \text{CrossEntropy}  \\
+D_{KL}(p||q) &amp; = H(p,q) - H(p) \\
+&amp; = -\sum_i{p_ilog(q_i)} - (-\sum_i{p_ilog(p_i)}) \\
+&amp; = -\sum_i{p_ilog(q_i)} + \sum_i{p_ilog(p_i)} \\
+&amp; = \sum_i{p_i log(\frac{p_i}{q_i})}
+\end{aligned}\]
+
+<h2 id="交叉熵在机器学习中的应用">交叉熵在机器学习中的应用</h2>
+
+<p>由于交叉熵的性质，所以在机器学习中，交叉熵被广泛的作为<strong>分类损失函数</strong>。</p>
+
+<p><img src="/assets/ce_loss.png" alt="ce_loss" /></p>
+
+<p>在一个分类任务的训练过程中，我们已知目标的真实概率分布，分类器在每次的训练过程中会给出一个预测的概率分布。我们把<strong>交叉熵</strong>作为我们的目标函数，优化的方向是使得目标函数（交叉熵）最小，交叉熵只有在预测概率分布于真实概率分布一致的情况下最小，所以交叉熵非常适合作为分类任务的损失函数。</p>
+
+<p>在信息论中<strong>信息熵</strong>，<strong>交叉熵</strong>公式中的 log 都是以 2 为底的对数，但是在机器学习中代码实现中，无论是用以10为底或者e为底都无所谓，因为对数都可以通过换底公式进行变换： \(log_e{n} = \frac{log_2{n}}{log_2{e}}\) ，因为分母始终是一个常数所以对于损失函数没有影响。</p>
+
+<p>信息熵原本作为信息论的一个重要概念，没有想到在多年以后会在机器学习中继续大放异彩。希望通过本文的内容能理解<strong>交叉熵损失函数</strong>真正的意义。本文是根据文章 <a href="https://towardsdatascience.com/entropy-cross-entropy-and-kl-divergence-explained-b09cdae917a">Entropy, Cross-Entropy, and KL-Divergence Explained!</a> 进行的改写，读者可以阅读原文获得跟多关于交叉熵的认识。</p>
+
+
+  </div><a class="u-url" href="/machinelearning/math/2020/09/27/cross-entropy.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Mengman的异想世界</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Mengman的异想世界</li><li><a class="u-email" href="mailto:corrsboy@gmail.com">corrsboy@gmail.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/Mengman"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">Mengman</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>Program 4 Fun/n Program 4 Life</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

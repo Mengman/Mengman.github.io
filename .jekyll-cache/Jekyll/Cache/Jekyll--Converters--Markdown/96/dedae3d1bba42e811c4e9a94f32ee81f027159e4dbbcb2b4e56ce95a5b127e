@@ -1,0 +1,13 @@
+I"�
+<ul>
+  <li><a href="#功能开关">功能开关</a>
+    <ul>
+      <li><a href="#简单的功能开关">简单的功能开关</a></li>
+      <li><a href="#开关路由器">开关路由器</a></li>
+      <li><a href="#解耦开关点与开关路由器">解耦开关点与开关路由器</a></li>
+      <li><a href="#判断翻转inversion-of-decision">判断翻转(Inversion of Decision)</a></li>
+      <li><a href="#消除条件判断">消除条件判断</a></li>
+    </ul>
+  </li>
+</ul>
+:ET

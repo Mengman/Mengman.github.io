@@ -1,0 +1,65 @@
+I"�<h2 id="softmax函数">Softmax函数</h2>
+<p>Softmax函数是在机器学习做分类预测中一个重要的工具函数。Softmax函数的数学定义如下：</p>
+
+<p>[\sigma(z)<em>j = \frac{e^{z_j}}{\sum</em>{k=1}^Ne^{z_k}} 
+\text{ for }j = 1, …, N  \text{ and } \mathbf{z} = (z_1, z_2, …, z_k)]</p>
+
+<p>如果用神经网络做一个分类手写数字预测，那么神经网络的最后一层有10个输出，分别作为预测为 0 ~ 9 的概率。那么怎么判断预测结果到底是哪个数字呢？ 一个简单的方法是找到10个输出里最大的那个作为预测结果。 但是这10个输出是相互独立的，其和不等于1。所以一个更好的办法是将所有的输出的和缩放到1，然后看每个输出占的比重，将这个值作为预测概率，而 Softmax 函数恰好可以做到这一点。对于分类  i  的预测概率为  \(p_i =\sigma(z)_i\)</p>
+
+<p>Softmax 函数非常好实现，下面是用 numpy 实现的 Softmax</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">softmax</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
+    <span class="n">exps</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">exp</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">exps</span> <span class="o">/</span> <span class="n">np</span><span class="p">.</span><span class="nb">sum</span><span class="p">(</span><span class="n">exps</span><span class="p">)</span>
+</code></pre></div></div>
+<p>在实现 Softmax 函数的时候，由于涉及到指数运算，在输出比较大的时候，非常容易造成结果溢出。
+为了使得 softmax 函数在数值上更加稳定，我们可以先对 $\mathbf{z}$ 进行 normalization 。 Normalization 除了统计学上的<code class="language-plaintext highlighter-rouge">标准分</code>( \(\frac{\mathbf{X} - \mu}{\sigma}\) ) , 机器学习中还常用三种其他的方法： L1, L2 和 max</p>
+
+<p>L1: \(\frac{\mathbf{z}}{\sum_{i=1}^n{\vert z_i \vert }}\)</p>
+
+<p>L2:  \(\frac{\mathbf{z}}{\sqrt{\sum_{i=1}^n{z_i^2}}}\)</p>
+
+<p>max: \(\frac{\mathbf{z}}{\max{\mathbf{z}}}\)</p>
+
+<p>于是可以把上面的代码改写为</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">stable_softmax</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
+    <span class="n">exps</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">exp</span><span class="p">(</span><span class="n">X</span> <span class="o">-</span> <span class="n">np</span><span class="p">.</span><span class="nb">max</span><span class="p">(</span><span class="n">X</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">exps</span> <span class="o">/</span> <span class="n">np</span><span class="p">.</span><span class="nb">sum</span><span class="p">(</span><span class="n">exps</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="softmax-求导">Softmax 求导</h2>
+<p>由于 softmax 的良好性质，在用神经网络做分类任务时，通常直接将最后一层设置为 softmax, 这个时候就要考虑如何对 softmax 进行求导。神经网络输出 $\mathbf{z}$ 长度为 k ，那么要对这个 k 个输出进行求偏导。</p>
+
+<p>[\frac{\partial\sigma(\mathbf{z})}{\partial\mathbf{z}} = 
+  \begin{bmatrix}
+      \frac{\partial\sigma(z)_0}{\partial z_0} &amp; \frac{\partial\sigma(z)_1}{\partial z_0} &amp; … &amp; \frac{\partial\sigma(z)_N}{\partial z_0} <br />
+      \frac{\partial\sigma(z)_0}{\partial z_1} &amp; \frac{\partial\sigma(z)_1}{\partial z_1} &amp; … &amp; \frac{\partial\sigma(z)_N}{\partial z_1} <br />
+      … <br />
+      \frac{\partial\sigma(z)_0}{\partial z_N} &amp; \frac{\partial\sigma(z)_1}{\partial z_N} &amp; … &amp; \frac{\partial\sigma(z)_N}{\partial z_N} <br />
+  \end{bmatrix}]</p>
+
+<p>对于矩阵中的元素  \(\frac{\partial\sigma(z)_i}{\partial z_j}\) ， 如果  \(i \neq j\)  :</p>
+
+<p>[\begin{aligned} \frac{\partial\frac{e^{z_i}}{\sum_{k=1}^Ne^{z_k}} }{\partial z^j} &amp; = \frac{0 - e^{z_i} e^{z_j}}{ (\sum_{k=1}^Ne^{z_k})^2 } <br />
+&amp; = \frac{-e^{z_i}}{\sum_{k=1}^Ne^{z_k}} \times \frac{e^{z_j}}{\sum_{k=1}^Ne^{z_k}} <br />
+&amp; = -p_i \times p_j\end{aligned}]</p>
+
+<p>如果 i = j :</p>
+
+<p>[\begin{aligned}\frac{\partial\frac{e^{z_i}}{\sum_{k=1}^Ne^{z_k}} }{\partial z^i} &amp;= \frac{ e^{z_i} }{ \sum_{k=1}^Ne^{z_k} } - \frac{ e^{2z_i} }{ (\sum_{k=1}^Ne^{z_k})^2 } <br />
+&amp; = \frac{ e^{z_i} (\sum_{k=1}^Ne^k - e^{z_i}) }{ (\sum_{k=1}^Ne^{z_k})^2 } <br />
+&amp; = p_i (1-p_i)
+\end{aligned}]</p>
+
+<p>求导矩阵可以改写为：</p>
+
+<p>[\frac{\partial\sigma(\mathbf{z})}{\partial\mathbf{z}} = 
+  \begin{bmatrix}
+      p_0(1-p_0) &amp; -p_1 \times p_0 &amp; … &amp; - p_N * p_0 <br />
+      -p_0 \times p_1 &amp; p_1(1-p_1) &amp; … &amp; - p_N * p_1 <br />
+      … <br />
+      -p_0 \times p_N &amp; -p_1 \times p_N &amp; … &amp;  p_N(1-p_N) <br />
+\end{bmatrix}]</p>
+
+<h2 id="交叉熵">交叉熵</h2>
+:ET

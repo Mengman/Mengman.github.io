@@ -1,0 +1,54 @@
+I"%<h2 id="python-项目管理-poetry-上手">Python 项目管理 Poetry 上手</h2>
+
+<p>Python 项目依赖管理工具有 virtualenv pipenv anaconda，来帮助项目做到项目之间的环境隔离，依赖管理等。今天介绍的 Poetry 是它更像是 Python 项目 CLI 工具，能够进行项目模板创建，依赖管理，项目构建与发布等。Poetry v0.1.0 版本发布2018-02，到现在两年的时间，目前社区比较活跃。</p>
+
+<h3 id="poetry-配置">Poetry 配置</h3>
+
+<h4 id="1--安装">1  安装</h4>
+
+<p>OSX / Linux / bashonwindows 使用脚本自动安装</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl <span class="nt">-sSL</span> https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
+</code></pre></div></div>
+
+<p>在类 *nix 的系统中 Poetry 会默认安装在 <code>$HOME/.poetry/bin </code> 中， 在window系统下默认安装目录为 <code>%USERPROFILE%\.poetry\bin</code>。</p>
+
+<p>如果要修改安装目录，需要在运行安装脚本时通过环境变量 <code>POETRY_HOME</code> 来指定。 使用参数 <code>--version</code> 或者环境变量 <code>POETRY_VERSION</code> 可以指定安装版本。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">POETRY_HOME</span><span class="o">=</span>/etc/poetry python get-poetry.py <span class="nt">--version</span> 1.0.5
+</code></pre></div></div>
+
+<h4 id="2-安装检查">2. 安装检查</h4>
+
+<p>安装成功后检查 poetry 版本</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>poetry <span class="nt">--version</span>
+</code></pre></div></div>
+
+<p>如果无法找到  <code>poetry</code> 命令， 那么记得把安装目录加到 $PATH 中。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">export</span> <span class="nv">$PATH</span><span class="o">=</span><span class="nv">$HOME</span>/.poetry/bin:<span class="nv">$PATH</span>
+</code></pre></div></div>
+
+<h4 id="3更新卸载-poetry">3.更新&amp;卸载 Poetry</h4>
+
+<p>更新 Poetry</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 更新到最新的稳定版本</span>
+poetry self update
+
+<span class="c"># 更新到预览版本</span>
+poetry self udpate <span class="nt">--preview</span>
+
+<span class="c"># 更新到指定版本</span>
+poetry self update 1.0.5
+</code></pre></div></div>
+
+<p>卸载 Poetry</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python get-poetry.py <span class="nt">--uninstall</span>
+</code></pre></div></div>
+
+<h3 id="基本用法">基本用法</h3>
+
+:ET
