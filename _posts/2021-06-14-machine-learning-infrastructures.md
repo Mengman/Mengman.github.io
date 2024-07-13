@@ -2,7 +2,7 @@
 layout: post
 title: 机器学习项目基础设施
 date: 2021-06-14 00:00:00 +0800
-categories: matchinelearning deeplearning softwareenginer
+categories: machinelearning deeplearning softwareenginer
 typora-root-url: ..
 ---
 # 机器学习项目基础设施

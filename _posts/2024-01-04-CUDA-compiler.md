@@ -2,7 +2,7 @@
 layout: post
 title: CUDA 代码编译流程
 date: 2024-01-04 00:00:00 +0800
-categories: matchinelearning deeplearning softwareenginer CUDA
+categories: machinelearning deeplearning softwareenginer CUDA
 typora-root-url: ..
 ---
 
