@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>机器学习项目基础设施 | Mengman的异想世界</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="机器学习项目基础设施" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="机器学习项目基础设施 机器学习过程可以大体上分为三个部分数据管理、模型训练与生产部署。 图片来自课程 Full Stack Deep Learning 数据管理 数据源(sources) 数据源负责数据的存储与数据格式，常用的存储方式包括本地的文件系统、服务器上的对象存储。常用的数据格式有HDF5、Parquet 等。 数据湖/数据仓库 负责管理记录数据集，常见的数据湖软件/服务包括有：snowflake、databricks 数据处理 数据处理有很多并行计算的框架 apache airflow：由 Airbnb 开源的计算框架，可以用来构建 DAG 计算图，实现数据的细粒度并行处理。 spark：老牌数据流处理框架，支持 Java、Python 在内的多种语言。 Dagster：和 airflow 一样也是一个数据计算的编排框架 数据分析 pandas：最常用的数据处理框架 rapis: 基本上就是支持 GPU 计算的pandas 版本控制 DVC：全名叫 Data version control，专门负责数据版本控制还有模型版本控制的工具，它的操作基于git，通过对大文件的管理来实现版本控制。 Pachyderm: Pachyderm 不只是单纯的数据版本控制，还提供了数据生成pipeline的管理。 模型训练 计算设备&amp;服务 本地的计算设备、各种云计算服务 资源管理 Docke、sdetermined AI 等 计算框架&amp;分布式训练框架 深度学习框架：Pytorch、 tensorflow 深度学习库：fast.ai、keras 分布式计算框架：RAY 等 实验管理 TensorBoard：tensorflow 的可视化实验管理模块，现在独立出来，甚至 pytorch 都对他进行了支持。但是它没有对多个实验的管理能力。 mlflow：是一款开源的试验管理工具，最大的特点是提供本地的实验管理功能，没有各种收费的云服务版本。 weights &amp; biases: 是一款综合的实验管理工具，它除了提供实验追踪，还提供了数据可视化、模型调优等功能。但是 W&amp;B 是一款基于网络服务的实验管理工具。 Neptune.ai comet.ml: 也是基于网络服务的实验管理工具。 超参调试 SIGOPT Determined AI Weight &amp; Biases Tune 模型部署 CI&amp;测试 Jenkins Gitlab CI Circle CI 边缘设备部署 Nvidia TensorRT TensorFlow Lite" />
+<meta property="og:description" content="机器学习项目基础设施 机器学习过程可以大体上分为三个部分数据管理、模型训练与生产部署。 图片来自课程 Full Stack Deep Learning 数据管理 数据源(sources) 数据源负责数据的存储与数据格式，常用的存储方式包括本地的文件系统、服务器上的对象存储。常用的数据格式有HDF5、Parquet 等。 数据湖/数据仓库 负责管理记录数据集，常见的数据湖软件/服务包括有：snowflake、databricks 数据处理 数据处理有很多并行计算的框架 apache airflow：由 Airbnb 开源的计算框架，可以用来构建 DAG 计算图，实现数据的细粒度并行处理。 spark：老牌数据流处理框架，支持 Java、Python 在内的多种语言。 Dagster：和 airflow 一样也是一个数据计算的编排框架 数据分析 pandas：最常用的数据处理框架 rapis: 基本上就是支持 GPU 计算的pandas 版本控制 DVC：全名叫 Data version control，专门负责数据版本控制还有模型版本控制的工具，它的操作基于git，通过对大文件的管理来实现版本控制。 Pachyderm: Pachyderm 不只是单纯的数据版本控制，还提供了数据生成pipeline的管理。 模型训练 计算设备&amp;服务 本地的计算设备、各种云计算服务 资源管理 Docke、sdetermined AI 等 计算框架&amp;分布式训练框架 深度学习框架：Pytorch、 tensorflow 深度学习库：fast.ai、keras 分布式计算框架：RAY 等 实验管理 TensorBoard：tensorflow 的可视化实验管理模块，现在独立出来，甚至 pytorch 都对他进行了支持。但是它没有对多个实验的管理能力。 mlflow：是一款开源的试验管理工具，最大的特点是提供本地的实验管理功能，没有各种收费的云服务版本。 weights &amp; biases: 是一款综合的实验管理工具，它除了提供实验追踪，还提供了数据可视化、模型调优等功能。但是 W&amp;B 是一款基于网络服务的实验管理工具。 Neptune.ai comet.ml: 也是基于网络服务的实验管理工具。 超参调试 SIGOPT Determined AI Weight &amp; Biases Tune 模型部署 CI&amp;测试 Jenkins Gitlab CI Circle CI 边缘设备部署 Nvidia TensorRT TensorFlow Lite" />
+<link rel="canonical" href="https://mengman.github.io/matchinelearning/deeplearning/softwareenginer/2021/06/14/machine-learning-infrastructures.html" />
+<meta property="og:url" content="https://mengman.github.io/matchinelearning/deeplearning/softwareenginer/2021/06/14/machine-learning-infrastructures.html" />
+<meta property="og:site_name" content="Mengman的异想世界" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-06-14T00:00:00+08:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="机器学习项目基础设施" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2021-06-14T00:00:00+08:00","datePublished":"2021-06-14T00:00:00+08:00","description":"机器学习项目基础设施 机器学习过程可以大体上分为三个部分数据管理、模型训练与生产部署。 图片来自课程 Full Stack Deep Learning 数据管理 数据源(sources) 数据源负责数据的存储与数据格式，常用的存储方式包括本地的文件系统、服务器上的对象存储。常用的数据格式有HDF5、Parquet 等。 数据湖/数据仓库 负责管理记录数据集，常见的数据湖软件/服务包括有：snowflake、databricks 数据处理 数据处理有很多并行计算的框架 apache airflow：由 Airbnb 开源的计算框架，可以用来构建 DAG 计算图，实现数据的细粒度并行处理。 spark：老牌数据流处理框架，支持 Java、Python 在内的多种语言。 Dagster：和 airflow 一样也是一个数据计算的编排框架 数据分析 pandas：最常用的数据处理框架 rapis: 基本上就是支持 GPU 计算的pandas 版本控制 DVC：全名叫 Data version control，专门负责数据版本控制还有模型版本控制的工具，它的操作基于git，通过对大文件的管理来实现版本控制。 Pachyderm: Pachyderm 不只是单纯的数据版本控制，还提供了数据生成pipeline的管理。 模型训练 计算设备&amp;服务 本地的计算设备、各种云计算服务 资源管理 Docke、sdetermined AI 等 计算框架&amp;分布式训练框架 深度学习框架：Pytorch、 tensorflow 深度学习库：fast.ai、keras 分布式计算框架：RAY 等 实验管理 TensorBoard：tensorflow 的可视化实验管理模块，现在独立出来，甚至 pytorch 都对他进行了支持。但是它没有对多个实验的管理能力。 mlflow：是一款开源的试验管理工具，最大的特点是提供本地的实验管理功能，没有各种收费的云服务版本。 weights &amp; biases: 是一款综合的实验管理工具，它除了提供实验追踪，还提供了数据可视化、模型调优等功能。但是 W&amp;B 是一款基于网络服务的实验管理工具。 Neptune.ai comet.ml: 也是基于网络服务的实验管理工具。 超参调试 SIGOPT Determined AI Weight &amp; Biases Tune 模型部署 CI&amp;测试 Jenkins Gitlab CI Circle CI 边缘设备部署 Nvidia TensorRT TensorFlow Lite","headline":"机器学习项目基础设施","mainEntityOfPage":{"@type":"WebPage","@id":"https://mengman.github.io/matchinelearning/deeplearning/softwareenginer/2021/06/14/machine-learning-infrastructures.html"},"url":"https://mengman.github.io/matchinelearning/deeplearning/softwareenginer/2021/06/14/machine-learning-infrastructures.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="assets/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://mengman.github.io/feed.xml" title="Mengman的异想世界" /></head><body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Mengman的异想世界</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">机器学习项目基础设施</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2021-06-14T00:00:00+08:00" itemprop="datePublished">Jun 14, 2021
+      </time></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul>
+  <li><a href="#机器学习项目基础设施">机器学习项目基础设施</a>
+    <ul>
+      <li><a href="#数据管理">数据管理</a>
+        <ul>
+          <li><a href="#数据源sources">数据源(sources)</a></li>
+          <li><a href="#数据湖数据仓库">数据湖/数据仓库</a></li>
+          <li><a href="#数据处理">数据处理</a></li>
+          <li><a href="#数据分析">数据分析</a></li>
+          <li><a href="#版本控制">版本控制</a></li>
+        </ul>
+      </li>
+      <li><a href="#模型训练">模型训练</a>
+        <ul>
+          <li><a href="#计算设备服务">计算设备&amp;服务</a></li>
+          <li><a href="#资源管理">资源管理</a></li>
+          <li><a href="#计算框架分布式训练框架">计算框架&amp;分布式训练框架</a></li>
+          <li><a href="#实验管理">实验管理</a></li>
+          <li><a href="#超参调试">超参调试</a></li>
+        </ul>
+      </li>
+      <li><a href="#模型部署">模型部署</a>
+        <ul>
+          <li><a href="#ci测试">CI&amp;测试</a></li>
+          <li><a href="#边缘设备部署">边缘设备部署</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+    <h1 id="机器学习项目基础设施">机器学习项目基础设施</h1>
+
+<p>机器学习过程可以大体上分为三个部分数据管理、模型训练与生产部署。</p>
+
+<p><img src="/assets/ml_infrastructure.png" alt="ml_infrastructure" /></p>
+
+<p><em>图片来自课程 <a href="[Lecture 6: Infrastructure &amp; Tooling - Full Stack Deep Learning](https://fullstackdeeplearning.com/spring2021/lecture-6/)">Full Stack Deep Learning</a></em></p>
+
+<h2 id="数据管理">数据管理</h2>
+
+<h3 id="数据源sources">数据源(sources)</h3>
+
+<p>数据源负责数据的存储与数据格式，常用的存储方式包括本地的文件系统、服务器上的对象存储。常用的数据格式有HDF5、Parquet 等。</p>
+
+<h3 id="数据湖数据仓库">数据湖/数据仓库</h3>
+
+<p>负责管理记录数据集，常见的数据湖软件/服务包括有：snowflake、databricks</p>
+
+<h3 id="数据处理">数据处理</h3>
+
+<p>数据处理有很多并行计算的框架</p>
+
+<ul>
+  <li>apache airflow：由 Airbnb 开源的计算框架，可以用来构建 DAG 计算图，实现数据的细粒度并行处理。</li>
+  <li>spark：老牌数据流处理框架，支持 Java、Python 在内的多种语言。</li>
+  <li>Dagster：和 airflow 一样也是一个数据计算的编排框架</li>
+</ul>
+
+<h3 id="数据分析">数据分析</h3>
+
+<ul>
+  <li>pandas：最常用的数据处理框架</li>
+  <li>rapis: 基本上就是支持 GPU 计算的pandas</li>
+</ul>
+
+<h3 id="版本控制">版本控制</h3>
+
+<ul>
+  <li>DVC：全名叫 Data version control，专门负责数据版本控制还有模型版本控制的工具，它的操作基于git，通过对大文件的管理来实现版本控制。</li>
+  <li>Pachyderm:  Pachyderm 不只是单纯的数据版本控制，还提供了数据生成pipeline的管理。</li>
+</ul>
+
+<h2 id="模型训练">模型训练</h2>
+
+<h3 id="计算设备服务">计算设备&amp;服务</h3>
+
+<p>本地的计算设备、各种云计算服务</p>
+
+<h3 id="资源管理">资源管理</h3>
+
+<p>Docke、sdetermined AI 等</p>
+
+<h3 id="计算框架分布式训练框架">计算框架&amp;分布式训练框架</h3>
+
+<p>深度学习框架：Pytorch、 tensorflow</p>
+
+<p>深度学习库：<a href="http://fast.ai">fast.ai</a>、keras</p>
+
+<p>分布式计算框架：RAY 等</p>
+
+<h3 id="实验管理">实验管理</h3>
+
+<ul>
+  <li>TensorBoard：tensorflow 的可视化实验管理模块，现在独立出来，甚至 pytorch 都对他进行了支持。但是它没有对多个实验的管理能力。</li>
+  <li>mlflow：是一款开源的试验管理工具，最大的特点是提供本地的实验管理功能，没有各种收费的云服务版本。</li>
+  <li>weights &amp; biases: 是一款综合的实验管理工具，它除了提供实验追踪，还提供了数据可视化、模型调优等功能。但是 W&amp;B 是一款基于网络服务的实验管理工具。</li>
+  <li><a href="http://Neptune.ai">Neptune.ai</a> <a href="http://comet.ml">comet.ml</a>:  也是基于网络服务的实验管理工具。</li>
+</ul>
+
+<h3 id="超参调试">超参调试</h3>
+
+<ul>
+  <li>SIGOPT</li>
+  <li>Determined AI</li>
+  <li>Weight &amp; Biases</li>
+  <li>Tune</li>
+</ul>
+
+<h2 id="模型部署">模型部署</h2>
+
+<h3 id="ci测试">CI&amp;测试</h3>
+
+<ul>
+  <li>Jenkins</li>
+  <li>Gitlab CI</li>
+  <li>Circle CI</li>
+</ul>
+
+<h3 id="边缘设备部署">边缘设备部署</h3>
+
+<ul>
+  <li>Nvidia TensorRT</li>
+  <li>TensorFlow Lite</li>
+</ul>
+
+  </div><a class="u-url" href="/matchinelearning/deeplearning/softwareenginer/2021/06/14/machine-learning-infrastructures.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Mengman的异想世界</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Mengman的异想世界</li><li><a class="u-email" href="mailto:corrsboy@gmail.com">corrsboy@gmail.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/Mengman"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">Mengman</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>Program 4 Fun/n Program 4 Life</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
