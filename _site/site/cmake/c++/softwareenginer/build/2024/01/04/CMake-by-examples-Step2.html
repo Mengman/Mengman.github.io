@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>【学习 cmake step2】 创建公共库(library) | Mengman的异想世界</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="【学习 cmake step2】 创建公共库(library)" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="目标：学习在项目中如何构建和使用一个公共库(library)。" />
+<meta property="og:description" content="目标：学习在项目中如何构建和使用一个公共库(library)。" />
+<link rel="canonical" href="https://mengman.github.io/cmake/c++/softwareenginer/build/2024/01/04/CMake-by-examples-Step2.html" />
+<meta property="og:url" content="https://mengman.github.io/cmake/c++/softwareenginer/build/2024/01/04/CMake-by-examples-Step2.html" />
+<meta property="og:site_name" content="Mengman的异想世界" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2024-01-04T00:00:00+08:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="【学习 cmake step2】 创建公共库(library)" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2024-01-04T00:00:00+08:00","datePublished":"2024-01-04T00:00:00+08:00","description":"目标：学习在项目中如何构建和使用一个公共库(library)。","headline":"【学习 cmake step2】 创建公共库(library)","mainEntityOfPage":{"@type":"WebPage","@id":"https://mengman.github.io/cmake/c++/softwareenginer/build/2024/01/04/CMake-by-examples-Step2.html"},"url":"https://mengman.github.io/cmake/c++/softwareenginer/build/2024/01/04/CMake-by-examples-Step2.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="assets/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://mengman.github.io/feed.xml" title="Mengman的异想世界" /></head><body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Mengman的异想世界</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">【学习 cmake step2】 创建公共库(library)</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2024-01-04T00:00:00+08:00" itemprop="datePublished">Jan 4, 2024
+      </time></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul>
+  <li><a href="#源码实现">源码实现</a></li>
+  <li><a href="#命令讲解">命令讲解</a>
+    <ul>
+      <li><a href="#add_library">add_library</a></li>
+      <li><a href="#add_subdirectory">add_subdirectory</a></li>
+      <li><a href="#target_link_libraries">target_link_libraries</a></li>
+      <li><a href="#option">option</a></li>
+      <li><a href="#target_compile_definitions">target_compile_definitions</a></li>
+      <li><a href="#与位置无关的代码--fpic">与位置无关的代码 (-fPIC)</a></li>
+    </ul>
+  </li>
+</ul>
+
+    <p>目标：学习在项目中如何构建和使用一个公共库(library)。</p>
+
+<ol>
+  <li>在项目子文件夹中创建一个公共库，名字叫做 <code class="language-plaintext highlighter-rouge">MathFunctions</code> 供项目使用。</li>
+  <li>提供一个编译选项，来选择是使用 <code class="language-plaintext highlighter-rouge">MathFunctions</code> 还是系统库。</li>
+</ol>
+
+<h1 id="源码实现">源码实现</h1>
+
+<p><a href="https://cmake.org/cmake/help/latest/guide/tutorial/Adding%20a%20Library.html">Step 2: Adding a Library</a></p>
+
+<p><strong>目标1</strong> 创建 MathFunctions 公共库 
+Step2/MathFunctions/CMakeLists.txt</p>
+
+<div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># TODO 1: 添加子目录名字叫做 "MathFunctions" 的库 (但是没有指定库的类型)</span>
+<span class="nb">add_library</span><span class="p">(</span>MathFunctions MathFuntions.cxx mysqrt.cxx<span class="p">)</span>
+</code></pre></div></div>
+
+<p>Step2/CMakeLists.txt</p>
+<div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cmake_minimum_required</span><span class="p">(</span>VERSION 3.10<span class="p">)</span>
+<span class="nb">project</span><span class="p">(</span>Tutorial VERSION 1.0<span class="p">)</span>
+<span class="nb">set</span><span class="p">(</span>CMAKE_CXX_STANDARD 11<span class="p">)</span>
+<span class="nb">set</span><span class="p">(</span>CMAKE_CXX_STANDARD_REQUIRED True<span class="p">)</span>
+<span class="nb">configure_file</span><span class="p">(</span>Tutorial.h.in TutorialConfig.h<span class="p">)</span>
+
+<span class="c1"># TODO 2: 添加子目录"MathFunctions"作为依赖库</span>
+<span class="nb">add_subdirectory</span><span class="p">(</span>MathFunctions<span class="p">)</span>
+
+<span class="nb">add_executable</span><span class="p">(</span>Tutorial tutorial.cxx<span class="p">)</span>
+
+<span class="c1"># TODO 3: 将公共库添加到编译链接中</span>
+<span class="nb">target_link_libraries</span><span class="p">(</span>Tutorial PUBLIC MathFunctions<span class="p">)</span>
+<span class="c1"># TODO 4: 添加公共库的头文件到inlucde中</span>
+<span class="nb">target_include_directories</span><span class="p">(</span>
+	Tutorial PUBLIC
+	<span class="s2">"</span><span class="si">${</span><span class="nv">PROJECT_BINARY_DIR</span><span class="si">}</span><span class="s2">"</span>
+	<span class="s2">"</span><span class="si">${</span><span class="nv">PROJECT_SOURCE_DIR</span><span class="si">}</span><span class="s2">/MathFunctions"</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p><strong>目标2</strong> 选择编译，使用自定义的 <code class="language-plaintext highlighter-rouge">sqrt</code> 函数还是 <code class="language-plaintext highlighter-rouge">std::sqrt</code>
+通过添加编译参数 <code class="language-plaintext highlighter-rouge">USE_MYMATH</code> 并且将 <code class="language-plaintext highlighter-rouge">sqrt</code> 函数的实现代码 <code class="language-plaintext highlighter-rouge">mysqrt.cxx</code> 单独编译成一个公共库 <code class="language-plaintext highlighter-rouge">SqrtLibrary</code> 来实现。
+Step2/MathFunctions/CMakeLists.txt</p>
+<div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># TODO 1: 添加子目录名字叫做 "MathFunctions" 的库 (但是没有指定库的类型)</span>
+<span class="c1"># add_library(MathFunctions MathFuntions.cxx mysqrt.cxx)</span>
+
+<span class="c1"># TODO 14: 将 mysqrt.cxx 从 MathFunctions 中移除</span>
+<span class="c1"># 注意这里定义 MathFunctions 为动态库</span>
+<span class="nb">add_library</span><span class="p">(</span>MathFunctions SHARED MathFuntions.cxx<span class="p">)</span>
+
+<span class="c1"># TODO 7: 创建控制变量 USE_MYMATH 默认值为 ON</span>
+<span class="nb">option</span><span class="p">(</span>USE_MYMATH <span class="s2">"Use tutorial provided math implementation"</span> ON<span class="p">)</span>
+
+<span class="c1"># TODO 8: 设置编译变量 'USE_MYMATH' 来控制代码编译内容</span>
+<span class="nb">if</span> <span class="p">(</span>USE_MYMATH<span class="p">)</span>
+	<span class="nb">target_compile_definitions</span><span class="p">(</span>MathFunctions PRIVATE <span class="s2">"USE_MYMATH"</span><span class="p">)</span>
+<span class="nb">endif</span> <span class="p">()</span>
+
+<span class="nb">if</span> <span class="p">(</span>USE_MYMATH<span class="p">)</span>
+	<span class="c1"># TODO 12: 将自己实现的 mysqrt.cxx 定义为公共库 SqrtLibrary</span>
+	<span class="c1"># 定义为静态库</span>
+	<span class="nb">add_library</span><span class="p">(</span>SqrtLibrary STATIC mysqrt.cxx<span class="p">)</span>
+	<span class="c1"># 或者定义为动态库</span>
+	<span class="c1"># add_library(SqrtLibrary SHARED mysqrt.cxx)</span>
+
+	<span class="c1"># TODO 13： 添加编译链接</span>
+	<span class="nb">target_link_libraries</span><span class="p">(</span>MathFunctions PRIVATE SqrtLibrary<span class="p">)</span>
+<span class="nb">endif</span> <span class="p">()</span>
+</code></pre></div></div>
+
+<p>Step2/MathFunctions/MathFunctions.cxx</p>
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">"MathFunctions.h"</span><span class="cp">
+</span><span class="c1">// TODO 11: 添加标准库 cmath</span>
+<span class="cp">#include</span> <span class="cpf">&lt;cmath&gt;</span><span class="cp">
+</span>
+<span class="c1">// TODO 10: 根据编译参数引入 mysqrt.h</span>
+<span class="cp">#ifdef USE_MYMATH
+#include</span> <span class="cpf">"mysqrt.h"</span><span class="cp">
+#endif
+</span>
+<span class="k">namespace</span> <span class="n">mathfunctions</span> <span class="p">{</span>
+<span class="kt">double</span> <span class="n">sqrt</span><span class="p">(</span><span class="kt">double</span> <span class="n">x</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="c1">// TODO 9: 根据编译参数 USE_MYMATH 来选择具体调用的 sqrt 函数</span>
+<span class="cp">#ifdef USE_MYMATH
+</span><span class="k">return</span> <span class="n">detail</span><span class="o">::</span><span class="n">mysqrt</span><span class="p">(</span><span class="n">x</span><span class="p">);</span>
+<span class="cp">#else
+</span><span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">sqrt</span><span class="p">(</span><span class="n">x</span><span class="p">);</span>
+<span class="cp">#endif
+</span>
+<span class="p">}</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+
+<h1 id="命令讲解">命令讲解</h1>
+
+<h2 id="add_library">add_library</h2>
+
+<p><code class="language-plaintext highlighter-rouge">add_library</code>命令在CMake中用于定义一个库目标。它有以下几种使用方式:</p>
+
+<ol>
+  <li><strong>静态库</strong>
+    <div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">add_library</span><span class="p">(</span>lib_name [STATIC] source1.cpp source2.cpp ...<span class="p">)</span>
+</code></pre></div>    </div>
+    <p>这将使用<code class="language-plaintext highlighter-rouge">source1.cpp</code>、<code class="language-plaintext highlighter-rouge">source2.cpp</code>等源文件创建一个名为<code class="language-plaintext highlighter-rouge">lib_name</code>的静态库。</p>
+  </li>
+  <li><strong>共享库(动态库)</strong>
+    <div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">add_library</span><span class="p">(</span>lib_name [SHARED] source1.cpp source2.cpp ...<span class="p">)</span>
+</code></pre></div>    </div>
+    <p>这将使用<code class="language-plaintext highlighter-rouge">source1.cpp</code>、<code class="language-plaintext highlighter-rouge">source2.cpp</code>等源文件创建一个名为<code class="language-plaintext highlighter-rouge">lib_name</code>的共享库。</p>
+  </li>
+  <li><strong>对象库</strong>
+    <div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">add_library</span><span class="p">(</span>lib_name OBJECT source1.cpp source2.cpp ...<span class="p">)</span>
+</code></pre></div>    </div>
+    <p>这将编译<code class="language-plaintext highlighter-rouge">source1.cpp</code>、<code class="language-plaintext highlighter-rouge">source2.cpp</code>等源文件,但不会创建库文件,而是创建一个对象库,以便于后续链接到其他目标。</p>
+  </li>
+  <li><strong>导入库</strong>
+    <div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">add_library</span><span class="p">(</span>lib_name [STATIC | SHARED | OBJECT] IMPORTED [IMPORTED_LOCATION]<span class="p">)</span>
+</code></pre></div>    </div>
+    <p>这种方式用于导入一个预先构建好的库,而非使用源代码构建库。需要指定库的类型(<code class="language-plaintext highlighter-rouge">STATIC</code>、<code class="language-plaintext highlighter-rouge">SHARED</code>或<code class="language-plaintext highlighter-rouge">OBJECT</code>)以及它的位置。
+在定义库目标之后,你可以使用<code class="language-plaintext highlighter-rouge">target_link_libraries</code>命令将其链接到可执行目标或其他库目标。同时,也可以使用<code class="language-plaintext highlighter-rouge">set_target_properties</code>等命令设置库目标的属性。</p>
+  </li>
+</ol>
+
+<p>在使用 <code class="language-plaintext highlighter-rouge">add_library</code> 来创建库时，如果不指定库的类型(STATIC, SHARED)， cmake 可能根据不同操作系统平台，默认指定库的类型。</p>
+
+<h2 id="add_subdirectory">add_subdirectory</h2>
+<p><code class="language-plaintext highlighter-rouge">add_subdirectory</code>命令用于将另一个独立的CMakeLists.txt文件包含到当前的CMake构建中。它具有以下几个作用:</p>
+
+<ol>
+  <li><strong>包含子目录</strong>
+最常见的用法是将位于子目录中的CMakeLists.txt文件包含进来。这样子目录中定义的目标(如库、可执行文件等)也会被构建。
+    <div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">add_subdirectory</span><span class="p">(</span>subdirName<span class="p">)</span>
+</code></pre></div>    </div>
+  </li>
+  <li><strong>包含外部项目</strong>
+如果有一个外部项目提供了自己的CMakeLists.txt文件,我们也可以使用<code class="language-plaintext highlighter-rouge">add_subdirectory</code>命令将它包含进当前项目构建中。
+    <div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">add_subdirectory</span><span class="p">(</span>/path/to/external/project<span class="p">)</span>
+</code></pre></div>    </div>
+  </li>
+  <li><strong>指定二进制目录</strong>
+<code class="language-plaintext highlighter-rouge">add_subdirectory</code>还可以指定一个二进制目录,用于存放编译生成的中间文件和目标文件。
+    <div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">add_subdirectory</span><span class="p">(</span>subdirName <span class="si">${</span><span class="nv">PROJECT_BINARY_DIR</span><span class="si">}</span>/generated<span class="p">)</span>
+</code></pre></div>    </div>
+  </li>
+  <li><strong>排除构建某些组件</strong>
+可以通过设置CMake变量来控制是否包含某些子目录。
+    <div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">option</span><span class="p">(</span>WITH_SUBDIR <span class="s2">"Build subdirectory?"</span> ON<span class="p">)</span>
+<span class="nb">if</span><span class="p">(</span>WITH_SUBDIR<span class="p">)</span>
+ <span class="nb">add_subdirectory</span><span class="p">(</span>subdirName<span class="p">)</span>
+<span class="nb">endif</span><span class="p">()</span>
+</code></pre></div>    </div>
+  </li>
+  <li><strong>控制子目录构建行为</strong>
+<code class="language-plaintext highlighter-rouge">add_subdirectory</code>还可以传递额外的参数,这些参数会被传递给子目录的顶层CMakeLists.txt文件。子目录可以使用这些参数来控制其自身的构建行为。
+总之,<code class="language-plaintext highlighter-rouge">add_subdirectory</code>命令提供了一种方便的机制,将其他CMakeLists.txt文件集成到当前的构建系统中。它支持跨目录组织项目,以及复用外部项目。</li>
+</ol>
+
+<p>如果要同时指定多个包含 CMakeLists.txt 文件的子目录。
+方案一： 分别使用多个add_subdirectory命令</p>
+<div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">add_subdirectory</span><span class="p">(</span>subdir1<span class="p">)</span> 
+<span class="nb">add_subdirectory</span><span class="p">(</span>subdir2<span class="p">)</span> 
+<span class="nb">add_subdirectory</span><span class="p">(</span>subdir3<span class="p">)</span>
+</code></pre></div></div>
+<p>使用这种方式,每个子目录会被分别包含,CMake会按照命令出现的顺序逐个处理子目录。这在处理有依赖关系的子目录时很有用。</p>
+
+<p>方案二： 使用单个add_subdirectory命令并传递多个子目录</p>
+<div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">add_subdirectory</span><span class="p">(</span>subdir1 subdir2 subdir3<span class="p">)</span>
+</code></pre></div></div>
+<p>这种方式更加简洁,一行就可以包含多个子目录。CMake会按照参数列表的顺序依次处理每个子目录。
+不过需要注意,第二种方式中,所有子目录会被视为在同一级别,CMake不会去分析它们之间是否存在依赖关系。如果存在依赖关系,需要确保参数列表中的顺序是正确的。
+另外,无论采用哪种方式,被包含的子目录都需要包含一个CMakeLists.txt文件。如果某个子目录不包含该文件,CMake会直接忽略它。</p>
+
+<h2 id="target_link_libraries">target_link_libraries</h2>
+<p><code class="language-plaintext highlighter-rouge">target_link_libraries</code>命令是CMake中用于为目标(executable或library)链接所需库的关键命令。它的主要作用如下:</p>
+
+<ol>
+  <li><strong>链接库目标</strong>
+可以链接之前使用<code class="language-plaintext highlighter-rouge">add_library</code>定义的库目标。
+    <div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">add_library</span><span class="p">(</span>mylib src1.cpp<span class="p">)</span>
+<span class="nb">add_executable</span><span class="p">(</span>myapp main.cpp<span class="p">)</span>
+<span class="nb">target_link_libraries</span><span class="p">(</span>myapp mylib<span class="p">)</span>
+</code></pre></div>    </div>
+  </li>
+  <li><strong>链接系统库</strong>
+可以链接系统库,如pthread、m等。
+    <div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">target_link_libraries</span><span class="p">(</span>mytarget pthread m<span class="p">)</span>
+</code></pre></div>    </div>
+  </li>
+  <li><strong>链接第三方库</strong>
+可以链接第三方库,如boost、gtest等。
+    <div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">target_link_libraries</span><span class="p">(</span>mytarget /path/to/third_party_lib.so<span class="p">)</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><strong>链接导入库</strong>
+可以链接使用<code class="language-plaintext highlighter-rouge">add_library(... IMPORTED)</code>导入的预构建库。</p>
+  </li>
+  <li><strong>控制链接选项</strong>
+可以传递链接选项,如链接时间优化选项(-flto)、静态/动态链接选项(-static)等。
+    <div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">target_link_libraries</span><span class="p">(</span>mytarget -flto -static<span class="p">)</span>
+</code></pre></div>    </div>
+  </li>
+  <li><strong>传递链接依赖</strong>
+如果A链接了B和C,当D链接A时,B和C也会被传递性地链接进来。
+<code class="language-plaintext highlighter-rouge">target_link_libraries</code>是非常灵活和强大的,几乎所有链接目标库的情况都需要使用它。正确使用它可以确保目标正确构建和链接所需的所有依赖库。
+此外,<code class="language-plaintext highlighter-rouge">target_link_libraries</code>还支持传递链接接口,即被链接目标所暴露的包含目录、链接选项等,这使得构建更加模块化。
+总之,<code class="language-plaintext highlighter-rouge">target_link_libraries</code>是CMake中管理目标库依赖关系的核心命令,熟练掌握它对于跨平台C++构建至关重要。</li>
+</ol>
+
+<h2 id="option">option</h2>
+<p><code class="language-plaintext highlighter-rouge">option</code>命令在CMake中用于定义一个选项变量,这个变量可以在运行cmake时或者通过其他界面(如cmake-gui)进行设置。它的语法如下:</p>
+<div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">option</span><span class="p">(</span>&lt;option_variable&gt; <span class="s2">"help_string"</span> [value]<span class="p">)</span>
+</code></pre></div></div>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">&lt;option_variable&gt;</code>是将要定义的选项变量名。</li>
+  <li><code class="language-plaintext highlighter-rouge">"help_string"</code>是一个描述该选项作用的帮助字符串。</li>
+  <li><code class="language-plaintext highlighter-rouge">[value]</code>是可选的,用于指定默认值。如果省略,默认为OFF。</li>
+</ul>
+
+<p>例如:</p>
+<div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">option</span><span class="p">(</span>WITH_OPENGL <span class="s2">"Build with OpenGL support"</span> ON<span class="p">)</span>
+</code></pre></div></div>
+<p>这条命令定义了一个名为<code class="language-plaintext highlighter-rouge">WITH_OPENGL</code>的选项变量,描述为”Build with OpenGL support”,默认值为ON。</p>
+
+<p>在定义选项后,可以在配置CMake时通过命令行或其他界面设置该选项的值。例如:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cmake -DWITH_OPENGL=OFF ..
+</code></pre></div></div>
+<p>或者通过cmake-gui等图形界面进行设置。</p>
+
+<p>定义的选项变量可以在CMake脚本中使用,通常用于条件编译。比如:</p>
+<div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">if</span><span class="p">(</span>WITH_OPENGL<span class="p">)</span>
+    <span class="nb">add_definitions</span><span class="p">(</span>-DUSE_OPENGL<span class="p">)</span>
+    ...
+<span class="nb">else</span><span class="p">()</span>
+    ...
+<span class="nb">endif</span><span class="p">()</span>
+</code></pre></div></div>
+<p><code class="language-plaintext highlighter-rouge">option</code>命令为CMake构建系统提供了灵活性,允许用户根据需要启用或禁用某些特性。它使得一次配置就可以构建出不同的版本。开发人员也可以通过设置默认值,方便地控制构建行为。</p>
+
+<p><code class="language-plaintext highlighter-rouge">option</code> 与 <code class="language-plaintext highlighter-rouge">set</code> 命令对比</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>特性</th>
+      <th>option 命令</th>
+      <th>set 命令</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>定义方式</td>
+      <td>定义布尔选项变量,只能取 ON 或 OFF 值</td>
+      <td>可定义任意类型变量,包括布尔、字符串、列表等</td>
+    </tr>
+    <tr>
+      <td>用户可操作性</td>
+      <td>可在运行 CMake 时通过命令行或界面设置</td>
+      <td>无法在运行时直接修改,需在 CMakeLists.txt 中硬编码</td>
+    </tr>
+    <tr>
+      <td>默认值</td>
+      <td>如果未指定,默认为 OFF</td>
+      <td>必须显式指定值</td>
+    </tr>
+    <tr>
+      <td>帮助信息</td>
+      <td>可添加描述选项用途的帮助字符串</td>
+      <td>无法添加帮助信息</td>
+    </tr>
+    <tr>
+      <td>主要目的</td>
+      <td>为用户提供配置选项,控制构建行为</td>
+      <td>通用变量定义,用途广泛</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>两者虽然都可以定义变量,但 <code class="language-plaintext highlighter-rouge">option</code> 命令更侧重于为用户提供可配置的选项,而 <code class="language-plaintext highlighter-rouge">set</code> 命令则更加通用和灵活。合理使用两者有助于提高 CMake 构建系统的可用性和可维护性。</p>
+
+<h2 id="target_compile_definitions">target_compile_definitions</h2>
+
+<p><code class="language-plaintext highlighter-rouge">target_compile_definitions</code> 是 CMake 中用于为特定目标(target)添加编译定义的命令,通常用于条件编译。它的语法如下:</p>
+<div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">target_compile_definitions</span><span class="p">(</span>&lt;target&gt;
+                           &lt;INTERFACE|PUBLIC|PRIVATE&gt;
+                           [items1...]
+                           [...]
+                           <span class="p">)</span>
+</code></pre></div></div>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">&lt;target&gt;</code> 是要添加编译定义的目标,可以是由 <code class="language-plaintext highlighter-rouge">add_executable</code>、<code class="language-plaintext highlighter-rouge">add_library</code> 等命令创建的可执行目标或库目标。</li>
+  <li><code class="language-plaintext highlighter-rouge">&lt;INTERFACE|PUBLIC|PRIVATE&gt;</code> 用于指定编译定义的作用域:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">INTERFACE</code>: 将定义传播给依赖于该目标的其他目标。</li>
+      <li><code class="language-plaintext highlighter-rouge">PUBLIC</code>: 将定义传播给依赖于该目标的其他目标,并将其合并到依赖于上一个目标的目标中。</li>
+      <li><code class="language-plaintext highlighter-rouge">PRIVATE</code>: 定义仅用于该目标本身,不会传播到其他目标。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">[items...]</code> 是一个或多个编译定义的列表,每个定义可以是 <code class="language-plaintext highlighter-rouge">KEY=VALUE</code> 形式或只指定 <code class="language-plaintext highlighter-rouge">KEY</code>。</li>
+</ul>
+
+<p>例如:</p>
+<div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">add_library</span><span class="p">(</span>mylib src1.cpp src2.cpp<span class="p">)</span>
+<span class="nb">target_compile_definitions</span><span class="p">(</span>mylib
+  PRIVATE 
+    DEBUG_LEVEL=2   <span class="c1"># 为mylib指定DEBUG_LEVEL=2</span>
+    USE_CUSTOM_ALLOC <span class="c1"># 为mylib启用USE_CUSTOM_ALLOC</span>
+  PUBLIC   
+    MYLIB_EXPORTS   <span class="c1"># 将MYLIB_EXPORTS传播到依赖于mylib的其他目标</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>添加到目标上的编译定义会被传递给编译器,在源文件编译时生效。它们主要用于:</p>
+<ol>
+  <li>条件编译代码</li>
+  <li>定义构建配置相关的宏</li>
+  <li>控制库或程序的行为
+通过 <code class="language-plaintext highlighter-rouge">target_compile_definitions</code> 可以清晰地管理每个目标所需的编译定义,使构建系统更加模块化和可维护。相比在源代码中使用 <code class="language-plaintext highlighter-rouge">#define</code>、<code class="language-plaintext highlighter-rouge">-D</code> 编译器标志等方式,它更加集中和便于控制。</li>
+</ol>
+
+<p>对比 <code class="language-plaintext highlighter-rouge">target_compile_definitions</code> 和 <code class="language-plaintext highlighter-rouge">add_definitions</code></p>
+
+<table>
+  <thead>
+    <tr>
+      <th>对比项</th>
+      <th>target_compile_definitions</th>
+      <th>add_definitions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>作用范围</td>
+      <td>只针对指定的目标(target)</td>
+      <td>对所有目标都生效,全局范围</td>
+    </tr>
+    <tr>
+      <td>传递性</td>
+      <td>可通过<code class="language-plaintext highlighter-rouge">INTERFACE</code>、<code class="language-plaintext highlighter-rouge">PUBLIC</code>传递给依赖目标</td>
+      <td>不会传递给依赖目标</td>
+    </tr>
+    <tr>
+      <td>可重用性</td>
+      <td>模块化,更利于代码重用</td>
+      <td>全局性,不利于代码重用</td>
+    </tr>
+    <tr>
+      <td>生命周期</td>
+      <td>与目标生命周期相同,更易管理</td>
+      <td>在整个构建过程中都有效,难以管理</td>
+    </tr>
+    <tr>
+      <td>作用时间</td>
+      <td>立即为指定目标添加编译定义</td>
+      <td>直到遇到第一个目标定义时才生效</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>总的来说,<code class="language-plaintext highlighter-rouge">target_compile_definitions</code>更加现代、灵活、模块化,符合CMake的目标导向设计理念,建议优先使用。而<code class="language-plaintext highlighter-rouge">add_definitions</code>是一种传统的、全局的方式,在某些简单场景下也可以使用,但不够灵活。</p>
+
+<p>在编写CMakeLists.txt时,尽量使用<code class="language-plaintext highlighter-rouge">target_compile_definitions</code>以提高代码的可重用性和可维护性。</p>
+
+<h2 id="与位置无关的代码--fpic">与位置无关的代码 (-fPIC)</h2>
+
+<p>在目标2 的代码中如果将 <code class="language-plaintext highlighter-rouge">MathFunctions</code> 定义为动态库，而<code class="language-plaintext highlighter-rouge">SqrtLibrary</code> 定义为静态库，那么在编译过程中会报错：
+<code>/usr/bin/ld: libSqrtLibrary.a(mysqrt.cxx.o): relocation R_X86_64_PC32 against symbol `_ZSt4cout@@GLIBCXX_3.4` can not be used when making a shared object; recompile with -fPIC</code></p>
+
+<p><strong>先解释一下什么是 PIC</strong>
+PIC 的全称是 <strong>Position-Independent Code</strong> 与位置无关的代码, 它是指这段代码在加载和执行时,可以被放置在内存的任何位置而不会产生错误。
+这个概念的背景是,在现代操作系统中,进程的虚拟内存地址空间分为多个区域,不同类型的代码和数据被加载到不同的区域。而这些区域的起始地址并不是固定的,每次加载时都可能不同。如果代码中存在一些对内存地址做了绝对假设的情况,就可能导致程序在某些特定内存布局时无法正常运行。为了避免这种情况,需要生成”与位置无关的代码”(PIC)。具体来说,PIC代码在访问数据时,使用相对寻址而不是绝对地址,从而避免了对特定内存地址的依赖。编译器在生成PIC代码时,会插入一些额外的指令来计算数据的相对位置。
+生成PIC代码是必要的,主要有以下几种情况:</p>
+<ol>
+  <li><strong>生成共享库(动态库)时</strong>,共享库被加载到内存后其地址是不确定的,必须使用PIC。</li>
+  <li><strong>使用动态加载技术</strong>时,动态加载的代码也必须是PIC。</li>
+  <li><strong>内核模块编程</strong>时,内核模块加载位置也是不确定的,需要PIC。</li>
+  <li>某些<strong>特殊的嵌入式系统</strong>对代码的内存布局有特殊要求,也需要PIC。
+可以通过给编译器传递<code class="language-plaintext highlighter-rouge">-fPIC</code>选项来生成PIC代码。生成PIC代码会带来少量的代码大小和性能开销,但在现代CPU上这个开销通常可以忽略。</li>
+</ol>
+
+<p><strong>那为什么在编译项目的时候会爆这个错误呢？</strong>
+因为我们定义 <code class="language-plaintext highlighter-rouge">MathFunctions</code> 为动态库，而 <code class="language-plaintext highlighter-rouge">SqrtLibrary</code> 为静态库；如果<strong>最终的可执行程序</strong>或者<strong>静态库</strong>需要链接<strong>动态库</strong>, 则其中的所有代码都需要是位置无关代码(PIC)。这是因为动态库在加载时,其位置是不确定的,如果可执行程序中有非PIC代码,就会导致动态库无法正常加载和运行。</p>
+
+<p>另外，从glibc 2.23版本开始,链接器开始强制要求静态库必须是PIC格式的,否则会拒绝链接。之前的glibc版本也建议使用PIC静态库,但不是强制的。这一变化主要是为了执行保护和加固功能。因此,如果要在Linux系统上构建一个可执行程序,并且该程序需要链接动态库,或者要链接glibc 2.23+版本,那么所有被链接进来的静态库都必须是PIC格式的。如果之前的静态库是以默认非PIC方式编译的,就需要加上<code class="language-plaintext highlighter-rouge">-fPIC</code>选项重新编译,生成PIC格式的静态库。这一要求不仅来自于动态库加载的需求,也是glibc对静态库格式的限制要求。</p>
+
+<p><strong>解决方法</strong></p>
+<ol>
+  <li>将 <code class="language-plaintext highlighter-rouge">MathFunctions</code> 和 <code class="language-plaintext highlighter-rouge">SqrtLibrary</code>  都定义为动态库</li>
+  <li>为 cmake 添加上参数  <code class="language-plaintext highlighter-rouge">-DCMAKE_POSITION_INDEPENDENT_CODE=ON</code></li>
+  <li>通过 <code class="language-plaintext highlighter-rouge">set_target_properties(SqrtLibrary PROPERTIES POSITION_INDEPENDENT_CODE)</code>  单独将 SqrtLibrary  设置为支持 PIC。</li>
+</ol>
+
+
+  </div><a class="u-url" href="/cmake/c++/softwareenginer/build/2024/01/04/CMake-by-examples-Step2.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Mengman的异想世界</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Mengman的异想世界</li><li><a class="u-email" href="mailto:corrsboy@gmail.com">corrsboy@gmail.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/Mengman"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">Mengman</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>Program 4 Fun/n Program 4 Life</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

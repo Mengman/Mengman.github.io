@@ -1,0 +1,36 @@
+I"�
+<ul>
+  <li><a href="#什么是-cmake">什么是 cmake</a>
+    <ul>
+      <li><a href="#cmake-与编译器的关系">cmake 与编译器的关系</a></li>
+      <li><a href="#cmake-与-make-的对比">cmake 与 make 的对比</a></li>
+    </ul>
+  </li>
+  <li><a href="#创建一个简单的-c-项目">创建一个简单的 C++ 项目</a>
+    <ul>
+      <li><a href="#源码实现">源码实现</a></li>
+      <li><a href="#命令讲解">命令讲解</a>
+        <ul>
+          <li><a href="#cmake_minimum_required-命令">cmake_minimum_required 命令</a></li>
+          <li><a href="#project-命令">project 命令</a></li>
+          <li><a href="#add_executable-命令">add_executable 命令</a></li>
+          <li><a href="#set--命令与--cmake_cxx_standardcmake_cxx_standard_required">set  命令与  CMAKE_CXX_STANDARD，CMAKE_CXX_STANDARD_REQUIRED</a></li>
+          <li><a href="#configure_file">configure_file</a></li>
+          <li><a href="#target_include_directories">target_include_directories</a></li>
+          <li><a href="#cmake-内置路径变量">cmake 内置路径变量</a>
+            <ul>
+              <li><a href="#project_binary_dir">PROJECT_BINARY_DIR</a></li>
+              <li><a href="#cmake_source_dir">CMAKE_SOURCE_DIR</a></li>
+              <li><a href="#cmake_current_source_dir">CMAKE_CURRENT_SOURCE_DIR</a></li>
+              <li><a href="#cmake_current_binary_dir">CMAKE_CURRENT_BINARY_DIR</a></li>
+              <li><a href="#cmake_current_list_dir">CMAKE_CURRENT_LIST_DIR</a></li>
+              <li><a href="#project_source_dir">PROJECT_SOURCE_DIR</a></li>
+              <li><a href="#project_binary_dir-1">PROJECT_BINARY_DIR</a></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+:ET
