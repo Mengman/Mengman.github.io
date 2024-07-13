@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 学习cmake step2: 创建公共库(library)
+title: 【学习 cmake step2】 创建公共库(library)
 date: 2024-01-04 00:00:00 +0800
 categories: cmake C++ softwareenginer build
 typora-root-url: ..
@@ -11,7 +11,13 @@ typora-root-url: ..
 
 1. 在项目子文件夹中创建一个公共库，名字叫做 `MathFunctions` 供项目使用。
 2. 提供一个编译选项，来选择是使用 `MathFunctions` 还是系统库。 
+
+
+
 # 源码实现
+
+[Step 2: Adding a Library](https://cmake.org/cmake/help/latest/guide/tutorial/Adding%20a%20Library.html)
+
 **目标1** 创建 MathFunctions 公共库 
 Step2/MathFunctions/CMakeLists.txt
 
@@ -257,16 +263,22 @@ endif()
 
 `option` 与 `set` 命令对比
 
-| 特性 | option 命令 | set 命令 |
-|------|-------------|----------|
-| 定义方式 | 定义布尔选项变量,只能取 ON 或 OFF 值 | 可定义任意类型变量,包括布尔、字符串、列表等 |
+
+
+| 特性         | option 命令                           | set 命令                                          |
+| ------------ | ------------------------------------- | ------------------------------------------------- |
+| 定义方式     | 定义布尔选项变量,只能取 ON 或 OFF 值  | 可定义任意类型变量,包括布尔、字符串、列表等       |
 | 用户可操作性 | 可在运行 CMake 时通过命令行或界面设置 | 无法在运行时直接修改,需在 CMakeLists.txt 中硬编码 |
-| 默认值 | 如果未指定,默认为 OFF | 必须显式指定值 |
-| 帮助信息 | 可添加描述选项用途的帮助字符串 | 无法添加帮助信息 |
-| 主要目的 | 为用户提供配置选项,控制构建行为 | 通用变量定义,用途广泛 |
+| 默认值       | 如果未指定,默认为 OFF                 | 必须显式指定值                                    |
+| 帮助信息     | 可添加描述选项用途的帮助字符串        | 无法添加帮助信息                                  |
+| 主要目的     | 为用户提供配置选项,控制构建行为       | 通用变量定义,用途广泛                             |
+
 两者虽然都可以定义变量,但 `option` 命令更侧重于为用户提供可配置的选项,而 `set` 命令则更加通用和灵活。合理使用两者有助于提高 CMake 构建系统的可用性和可维护性。
 
+
+
 ## target_compile_definitions
+
 `target_compile_definitions` 是 CMake 中用于为特定目标(target)添加编译定义的命令,通常用于条件编译。它的语法如下:
 ```cmake
 target_compile_definitions(<target>
@@ -309,10 +321,17 @@ target_compile_definitions(mylib
 | 可重用性 | 模块化,更利于代码重用                    | 全局性,不利于代码重用      |
 | 生命周期 | 与目标生命周期相同,更易管理                 | 在整个构建过程中都有效,难以管理 |
 | 作用时间 | 立即为指定目标添加编译定义                  | 直到遇到第一个目标定义时才生效  |
+
+
+
 总的来说,`target_compile_definitions`更加现代、灵活、模块化,符合CMake的目标导向设计理念,建议优先使用。而`add_definitions`是一种传统的、全局的方式,在某些简单场景下也可以使用,但不够灵活。
+
 在编写CMakeLists.txt时,尽量使用`target_compile_definitions`以提高代码的可重用性和可维护性。
 
+
+
 ## 与位置无关的代码 (-fPIC)
+
 在目标2 的代码中如果将 `MathFunctions` 定义为动态库，而`SqrtLibrary` 定义为静态库，那么在编译过程中会报错：
 <code>/usr/bin/ld: libSqrtLibrary.a(mysqrt.cxx.o): relocation R_X86_64_PC32 against symbol `_ZSt4cout@@GLIBCXX_3.4` can not be used when making a shared object; recompile with -fPIC</code>
 

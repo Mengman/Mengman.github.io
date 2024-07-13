@@ -1,12 +1,19 @@
 ---
 layout: post
-title: 学习cmake step1: 创建一个简单的 C++ 项目
+title: 【学习 cmake step1】 创建一个简单的 C++ 项目
 date: 2024-01-04 00:00:00 +0800
 categories: cmake C++ softwareenginer build
 typora-root-url: ..
 ---
 
+
+
+本文是我学习 [cmake 官方教程](https://cmake.org/cmake/help/latest/guide/tutorial/index.html)的笔记，我在官方教程的基础上，对其中的知识点做了展开描述。
+
+
+
 # 什么是 cmake
+
 CMake 是一个跨平台的软件构建工具。
 
 它的主要功能包括
@@ -16,10 +23,16 @@ CMake 是一个跨平台的软件构建工具。
 
 CMake 支持构建多种编程语言项目，但是在 C/C++ ， CUDA 项目中使用的最广泛。
 
-## `cmake` 与编译器的关系
+
+
+## cmake 与编译器的关系
+
 C/C++ 项目有很多中编译器如 Linux/Unix 上最常用的 GCC， Clang， Windows 上的 MSVC
 
-## `cmake` 与 `make` 的对比
+
+
+## cmake 与 make 的对比
+
 `CMake` 和 `make` 都是 C/C++ 项目常用的自动化编译工具，帮助实现项目依赖管理、源代码编译与依赖库链接。 `CMake`  通过编写 `CMakeLists.txt` 文件来配置项目构建过程；`make` 通过编写 `Makefiles` 来配置项目构建过程。
 
 它们之间又有明显的区别:
@@ -33,8 +46,15 @@ C/C++ 项目有很多中编译器如 Linux/Unix 上最常用的 GCC， Clang， 
 | 输出     | 生成构建脚本（如 Makefiles）                                 | 编译完成的结果                                               |
 | 适合项目 | 大型跨平台 C/C++、CUDA 项目                                  | 小型项目、特定平台的项目，或者构建过程特别简单的项目（如 Golang 项目） |
 
+
+
 # 创建一个简单的 C++ 项目
+
+
+
 ## 源码实现
+
+[Step 1: A Basic Starting Point](https://cmake.org/cmake/help/latest/guide/tutorial/A%20Basic%20Starting%20Point.html)
 
 构建一个简单的可执行项目
 目标：
