@@ -2,7 +2,7 @@
 layout: post
 title: 【学习 cmake step1】 创建一个简单的 C++ 项目
 date: 2024-01-04 00:00:00 +0800
-categories: cmake C++ softwareenginer build
+categories: C++ cmake
 typora-root-url: ..
 ---
 

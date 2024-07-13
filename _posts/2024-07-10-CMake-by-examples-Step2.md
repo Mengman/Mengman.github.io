@@ -2,7 +2,7 @@
 layout: post
 title: 【学习 cmake step2】 创建公共库(library)
 date: 2024-01-04 00:00:00 +0800
-categories: cmake C++ softwareenginer build
+categories: C++ cmake
 typora-root-url: ..
 ---
 
