@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          token: ${{ secrets.HEXO_DEPLOY_KEY }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           # If your repository depends on submodule, please see: https://github.com/actions/checkout
           submodules: recursive
       
@@ -21,7 +21,7 @@ jobs:
         with:
           # Examples: 20, 18.19, >=16.20.2, lts/Iron, lts/Hydrogen, *, latest, current, node
           # Ref: https://github.com/actions/setup-node#supported-version-syntax
-          node-version: "v22.22.0"
+          node-version: "22.22.0"
       
       - name: Cache NPM dependencies
         uses: actions/cache@v4
