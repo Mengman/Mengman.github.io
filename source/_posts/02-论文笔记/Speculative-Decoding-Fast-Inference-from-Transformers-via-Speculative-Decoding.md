@@ -1,9 +1,9 @@
 ---
-title: 【投机解码专题】核心论文： Speculative-Decoding-Fast-Inference-from-Transformers-via-Speculative-Decoding
+title: 【投机解码专题】核心论文-1： Speculative-Decoding-Fast-Inference-from-Transformers-via-Speculative-Decoding
 date: 2026-07-02 23:43:18
 tags: [LLM, Speculative-Decoding]
 categories: paper
-typora-root-url: ..
+typora-root-url: ../../
 ---
 **投机解码**（Speculative Decoding）的核心思想，在 2022–2023 年间由 Google Research 和 DeepMind 两个团队几乎同时独立提出，代表性工作分别是：
 
@@ -12,7 +12,7 @@ typora-root-url: ..
 
 两篇论文共同奠定了这一方向的理论基础，本文笔记以第一篇（Leviathan 等）为主线展开。
 
-# Fast Inference from Transformers via Speculative Decoding
+
 
 ## 🚀五分钟全景图
 
@@ -20,11 +20,15 @@ typora-root-url: ..
 
 本文提出了一种**投机解码**方案：先用一个极轻量的“草稿模型”并行生成多个候选 Token，再由目标大模型做一次性验证。在**输出分布数学上严格不变**的前提下，将 Transformer 推理速度提升了约 **2～3 倍**。
 
+
+
 **创新点 (Contribution)：**
 
 1. **分布无损加速**：与知识蒸馏或剪枝不同，本文设计的“投机采样”算法，在数学上严格保证了最终采样分布与大模型原生分布完全一致，做到了“加速但不改输出”。
 2. **开箱即用**：无需改动大模型架构或重新训练，直接复用现成的小模型作为草稿即可。
 3. **模型无关**：适用于任意自回归架构（T5、LaMDA、GPT 等）。
+
+
 
 **启发 (Inspiration)：**
 
