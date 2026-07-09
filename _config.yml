@@ -104,3 +104,8 @@ deploy:
   type: git
   repo: https://github.com/Mengman/Mengman.github.io
   branch: gh-pages
+
+
+markdown:
+  plugins:
+    - markdown-it-mathjax3

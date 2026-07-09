@@ -32,8 +32,6 @@ typora-root-url: ../../
   	    - Eagle-3: Scaling up Inference Acceleration of Large Language Models via Training-Time Test
      - _贡献:_ 认为 MEDUSA 忽略了 Token 之间的顶层特征依赖（Feature Uncertainty）。EAGLE 在隐藏层（Feature Level）进行轻量级的自回归外推，使得草稿头在预测更远的 Token 时，准确率大幅超越 MEDUSA，成为目前业界单设备投机采样的 SOTA（State-of-the-Art）之一。目前已迭代至 **EAGLE-3**。
 
-
-
 本次先从 MEDUSA 开始做阅读笔记。
 
 
@@ -132,7 +130,7 @@ MEDUSA 有两种训练策略
 * **Loss** 函数
 	* 使用 Cross-Entropy loss 作为训练 loss
 	* 随着 MEDUSA head 序号增大，预测的不确定增大，loss 也增大；
-	* 引入 $\lambda_k$ 作为权重，平衡各 head 之间的 loss； $\mathcal{L}_{MEDUSA-1}=\displaystyle \sum_{k=1}^K -\lambda_k log{p_t^{(k)}}(y_{t+k+1})$
+	* 引入 $\lambda_k$ 作为权重，平衡各 head 之间的 loss； $\mathcal{L}_{\mathrm{MEDUSA-1}}=\displaystyle \sum_{k=1}^K -\lambda_k log{p_t^{(k)}}(y_{t+k+1})$
 
 * 优点：
 	* 微调(fine-tune) 显存占用低，可量化训练（QLoRA 风格）
@@ -144,8 +142,11 @@ MEDUSA 有两种训练策略
 **MEDUSA-2**： 将 Backbone 和 MEDUSA Heads 联合训练，可以获得更好的预测准确度。
 
 论文提出了三个训练 trick
+
+
+
 *  **Combined Loss**：
-	* $\mathcal{L}_{MEDUSA-2}=\mathcal{L}_{LM} + \lambda_0 \mathcal{L}_{MEDUSA-1}$  
+	* $\mathcal{L}_{\mathrm{MEDUSA-2}}=\mathcal{L}_{LM} + \lambda_0 \mathcal{L}_{\mathrm{MEDUSA-1}}$  
 	* 将原模型的 loss $\mathcal{L}_{LM}$  和 MEDUSA-1 的 loss 进行组合，并使用 $\lambda_0$ 来设置权重。
 * **Differential LR**
 	* 为 Backbone 和 Heads 的训练状态不同，需要分别设置不同的学习率；
@@ -192,9 +193,11 @@ $$
 * **MEDUSA-1**(冻结Backbone)：直接使用模型自生成的数据集作为Ground Truth来训练Heads，因为骨干权重不变，仅需拟合模型当前的输出分布，足够有效。
 
 * **MEDUSA-2**(联合训练)：仅用硬标签（Hard Labels，即采样出的离散token）训练会严重损害骨干能力。因此引入 **知识蒸馏（Knowledge Distillation）** 损失，将原始模型视为教师模型。其损失函数替换为：
+
 $$
-\mathcal{L}_{\text{LM-distill}} = KL\left(p_{\text{original},t}^{(0)} \ \middle|\middle|\ p_{t}^{(0)}\right)
+\mathcal{L}_{\mathrm{LM-distill}} = KL\left(p_{\text{original},t}^{(0)} \ \middle|\middle|\ p_{t}^{(0)}\right)
 $$
+
 即让当前正在训练的骨干输出的概率分布，去拟合原始冻结教师模型的概率分布（软标签Soft Labels），而非拟合单一的离散Token。
 
 **显存优化**
@@ -268,7 +271,7 @@ $$
 
 - **质量保持（Quality）**：这是最大的亮点。通过自蒸馏+KL散度约束，生成质量几乎无损（Vicuna-33B 得分 +0.05，Zephyr-7B 仅 -0.07，Vicuna-13B -0.14）。这证明了自蒸馏能够完美对齐模型的真实输出分布。
 
-- **VS 推测解码（Speculative Decoding）**：在相同模型上，推测解码（使用开源的 Tiny-Vicuna 等草稿模型）的加速比仅为 1.47~1.60倍，远低于 MEDUSA（2.35~2.83倍），凸显了 MEDUSA 在工程简洁性和加速上限上的双重优势。
+- **VS 推测解码（Speculative Decoding）**：在相同模型上，推测解码（使用开源的 Tiny-Vicuna 等草稿模型）的加速比仅为 1.47-1.60倍，远低于 MEDUSA（2.35-2.83倍），凸显了 MEDUSA 在工程简洁性和加速上限上的双重优势。
 
 
 
