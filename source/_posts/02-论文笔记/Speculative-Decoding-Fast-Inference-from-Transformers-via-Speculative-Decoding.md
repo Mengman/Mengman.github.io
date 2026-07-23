@@ -170,11 +170,11 @@ $$
 - ……
 - 至少生成 $\gamma+1$ 个 token 的概率等于前 $\gamma$ 个猜测全部被接受，即 $\alpha^\gamma$。
 
-因此： $E( \text{# generated tokens}) = 1 + \alpha + \alpha^2 + \dots + \alpha^\gamma$
+因此： $E( \text{\# generated tokens}) = 1 + \alpha + \alpha^2 + \dots + \alpha^\gamma$
 
 这是一个标准的等比数列求和，首项为 1，公比为 $\alpha$，项数为 $\gamma+1$。代入求和公式即得：
 $$
-E(\text{# generated tokens}) = \frac{1 \times (1 - \alpha^{\gamma+1})}{1 - \alpha}
+E(\text{\# generated tokens}) = \frac{1 \times (1 - \alpha^{\gamma+1})}{1 - \alpha}
 $$
 
 - 当 $\alpha \to 1$ 时（草稿模型完美预测），$E \to \gamma + 1$。即每轮生成上限个数，加速比最大。
@@ -184,7 +184,7 @@ $$
 
 ![fig-2](/image/Fast-Inference-from-Transformers-via-Speculative-Decoding/fig-2.png)
 
-Figure 2 是以 $\alpha$ 为横轴（范围 0~1），纵轴为 $E(\text{# tokens})$，并画出了不同 $\gamma$（1, 2, 3, 5, 7, $\infty $）下的曲线簇。从图2中可以获得两点启示：
+Figure 2 是以 $\alpha$ 为横轴（范围 0~1），纵轴为 $E(\text{\# tokens})$，并画出了不同 $\gamma$（1, 2, 3, 5, 7, $\infty $）下的曲线簇。从图2中可以获得两点启示：
 
 1. **投机解码的收益高度依赖于草稿模型的质量**：当 $\alpha < 0.6$ 时，所有曲线都非常扁平，无论 $\gamma$ 有多大，被接受的 token 数都不大于3。如果草稿模型只有 50% 的准确率，拉长猜测窗口（增大 $\gamma$）纯属浪费计算资源（因为第一个错误出现得很早）；只有当你确信小模型在大样本上能达到 80%~90% 的接受率时，加大 $\gamma$ 才有爆发式的线性增益。
 2. **边际递减效应明显**：对于固定的 $\alpha$（例如 $\alpha=0.8$），从 $\gamma=1$ 提升到 $\gamma=3$ 收益明显，但从 $\gamma=5$ 提升到 $\gamma=7$ 收益急剧放缓（曲线间距压缩）。草稿模型的计算成本随着 $\gamma$ 的增大线性增大，但是收益却没有等比例的提高。
@@ -271,7 +271,7 @@ Figure 3 展示了不同 c下最优 $\gamma$ 随 $\alpha$ 的变化趋势，从�
 
 在这种情况下，期望生成的 token 数将退化为：
 $$
-E(\text{# tokens}) = \frac{1}{1 - \alpha}
+E(\text{\# tokens}) = \frac{1}{1 - \alpha}
 $$
 （这是几何分布的无记忆期望，不再受 $\gamma$ 的截断限制）。
 
