@@ -3,7 +3,7 @@ title: CUDA 代码编译流程
 date: 2024-01-04 00:00:00 +0800
 tags: [machinelearning, deeplearning, CUDA]
 categories: CUDA
-typora-root-url: ..
+typora-root-url: ../../../
 ---
 
 # 1 编译流程
