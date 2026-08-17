@@ -260,6 +260,7 @@ flex_gemm autotune 缓存的默认位置 "~/.flex_gemm/autotune_cache.json", 通
 2. **打包 Cache**：将 cache 打包的 wheel 或者 docker 中
     1. 优点：不需要预热，使用过程无感
     2. 缺点：只能针对确定的环境
+3. **共享 triton cache 文件目录**，在部署环境通过 NFS 或者挂载路径让不同的进程共享同一个 triton cache 路径。
 
 
 
