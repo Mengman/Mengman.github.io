@@ -3,7 +3,7 @@ title: 【FreeToken 解读】边缘侧推理框架 FreeToken 论文笔记
 date: 2026-08-30T08:00:07.380Z
 tags: [LLM, EdgeInfer]
 categories: paper
-typora-root-url: ../../image/02-论文笔记/FreeToken
+typora-root-url: ../../
 ---
 
 ## 五分钟全景图 
@@ -92,7 +92,7 @@ Decoding 阶段的瓶颈归因于三个递进问题：
 1. **全层双缓冲（Full-Layer Double Buffering）**：由于 prefill 阶段几乎激活每层的全量专家，FreeToken 放弃"按需加载"，而是分配两个 full-layer buffer。GPU 在计算第 $l$ 层路由专家的同时，DMA 流并行加载第$l+1$层的**全量专家**到另一个 buffer。因为传输与计算重叠，prefill 总时间近似等于单次全量专家池的传输时间，专家计算被完全隐藏。
 2. **语义锚点状态缓存（Semantic-Aware State Caching）**：对混合注意力模型中的循环层（recurrent layer），FreeToken 在**特殊 token 边界**（`<thinking>`、`<tool_call>`、`<tool_output>`、conversation turn）锚定循环状态 checkpoint。Agent 框架（如 OpenClaw、SWE-agent）总是以这些语义块为单位进行截断/删除，因此锚点 checkpoint 大概率在编辑后仍然有效。当新请求到达时，FreeToken 从最深的存活 checkpoint 恢复，只对新的 suffix 重新预填充。
 
-![image-20260905180918717](/fig2.png)
+![专家加载机制](image/02-论文笔记/FreeToken/fig2.png)
 
 
 
@@ -186,11 +186,11 @@ FreeToken 通过归一化的专家参数存储设计来实现参数的高效加�
 
 
 
-![image-20260905185955190](/table_1.png)
+![实验环境](image/02-论文笔记/FreeToken/table_1.png)
 
 ### 5.2 Main Results
 
-![image-20260905190358617](/fig3.png)
+![推理系统横向对比](image/02-论文笔记/FreeToken/fig3.png)
 
 Figure 3 展示了端到端结果：
 
@@ -209,7 +209,7 @@ Figure 3 展示了端到端结果：
 
 ### 5.3 Breakdown and Cross-Hardware Analysis
 
-![image-20260905190511005](/fig4.png)
+![fig4](image/02-论文笔记/FreeToken/fig4.png)
 
 从三方面分析验证 FreeToken 机制的有效性和通用性：
 
@@ -225,7 +225,7 @@ Figure 3 展示了端到端结果：
    - RTX 4060 笔记本（8GB, PCIe x8）：FreeToken (NVFP4) 跑出 39.3 tok/s，是 RTX 4090 的 92%，且超过 Codex 生产 median（33 tok/s）。
    - GLM-5.2（753B）在 RTX PRO 6000 上：FreeToken 14.9 tok/s vs llama.cpp 7.3 tok/s（2.0×），KTransformers 因 host memory 不足（需要 753GB-1.5TB 但只有 512GB）无法运行。
 
-![image-20260905190539921](/fig5.png)
+![fig5](image/02-论文笔记/FreeToken/fig5.png)
 
 
 
