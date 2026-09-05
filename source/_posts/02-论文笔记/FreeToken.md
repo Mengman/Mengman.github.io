@@ -190,7 +190,7 @@ FreeToken 通过归一化的专家参数存储设计来实现参数的高效加�
 
 ### 5.2 Main Results
 
-![推理系统横向对比](image/02-论文笔记/FreeToken/fig3.png)
+![推理系统横向对比](/image/02-论文笔记/FreeToken/fig3.png)
 
 Figure 3 展示了端到端结果：
 
