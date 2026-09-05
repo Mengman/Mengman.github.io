@@ -8,17 +8,21 @@ typora-root-url: ../../
 
 ## 五分钟全景图 
 
-### **一句话概括**
+论文名称:  ["FreeToken: Efficient Edge-Native MoE Serving with Bandwidth-Adaptive Execution" (2026, Shuo Yang*, Xiaoze Fan*, et al.)](https://arxiv.org/abs/2608.16157)
+
+
+
+**一句话概括**
 
 FreeToken 是一个**边缘原生的 MoE（混合专家）模型推理系统**，它不再把个人电脑（如游戏本、工作站）当作"小 GPU"，而是将其视为**由 GPU、CPU、内存、PCIe 组成的异构推理平台**，通过**带宽自适应执行**、**语义感知缓存**和**弹性内存管理**，让消费级硬件能支持推理数据中心级别的前沿规模 MoE 模型（35B~753B 参数）。
 
-### **三大创新点**
+**三大创新点**
 
 1. **带宽自适应执行（Bandwidth-Adaptive Execution）**：不再"全量 offload 到 GPU"或"全量在 CPU 上算"，而是在每个 decode 步骤中，根据实时测量的 **PCIe 带宽** 和 **CPU 专家处理带宽** ，动态计算最优的 miss 专家分割比例 ，将部分 miss 专家通过 PCIe 加载到显存，其余直接在 CPU 上就地计算，两者并发执行，最大化利用CPU、GPU、PCIe 带宽资源。
 2. **语义感知状态缓存（Semantic-Aware State Caching）**：针对 Agent 工作中频繁编辑上下文（删除 tool output、thinking segment）的问题，FreeToken 在**特殊 token 边界**（如 `<tool_call>`、`<thinking>`）保存**循环状态（recurrent state）**作为锚点。当上下文被编辑时，只需从最近的存活锚点重新计算新后缀，避免了整段长上下文的重复预填充。
 3. **弹性边缘资源管理（Elastic Edge Resource Management）**：消费级 GPU 的 VRAM 被桌面合成器、浏览器等共享，可用预算动态变化。FreeToken 允许在运行时**无需重启引擎**即可调整 GPU 专家缓存和 KV 缓存的大小比例，并实现**快速冷启动**（直接加载 FTW 格式权重，跳过 GPU warm-up）。
 
-### **启发**
+**启发**
 
 - **MoE 推理不应只关注"预测命中率"**：现有工作（MoE-Infinity、ProMoE）大多优化"如何预测下一个专家"，但预测再准，miss 的专家最终还是要走 PCIe。FreeToken 的 insight 是：**与其消除 miss，不如让 miss 被服务得更高效**——把 CPU 当作计算资源而非存储仓库，是解锁边缘推理性能的关键。
 - **Agent 工作负载是"系统性"挑战，而非"单次推理"挑战**：Agent 的上下文编辑、工具调用、多轮对话使得 KV cache 复用率骤降。FreeToken 的语义锚点方案很务实：不追求通用 prefix tree 的最大复用，而是利用 Agent 框架本身的**结构化编辑模式**（只删除整块语义单元）来设计缓存策略。
