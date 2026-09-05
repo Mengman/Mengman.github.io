@@ -10,12 +10,12 @@ typora-root-url: ../../image/02-论文笔记/FreeToken
 
 ### **一句话概括**
 
-FreeToken 是一个**边缘原生的 MoE（混合专家）模型推理系统**，它不再把个人电脑（如游戏本、工作站）当作"小 GPU"，而是将其视为**由 GPU、CPU、内存、PCIe 组成的异构推理平台**，通过**带宽自适应执行**、**语义感知缓存**和**弹性内存管理**，让消费级硬件能够交互式运行原本只在数据中心才可行的前沿规模 MoE 模型（35B~753B 参数）。
+FreeToken 是一个**边缘原生的 MoE（混合专家）模型推理系统**，它不再把个人电脑（如游戏本、工作站）当作"小 GPU"，而是将其视为**由 GPU、CPU、内存、PCIe 组成的异构推理平台**，通过**带宽自适应执行**、**语义感知缓存**和**弹性内存管理**，让消费级硬件能支持推理数据中心级别的前沿规模 MoE 模型（35B~753B 参数）。
 
 ### **三大创新点**
 
-1. **带宽自适应执行（Bandwidth-Adaptive Execution）**：不再"全量 offload 到 GPU"或"全量在 CPU 上算"，而是在每个 decode 步骤中，根据实时测量的 **PCIe 带宽** 和 **CPU 专家处理带宽** ，动态计算最优的 miss 专家分割比例 ，将部分 miss 专家通过 PCIe 填入 GPU 缓存，其余直接在 CPU 上就地计算，两者并发执行，最大化利用两种带宽。
-2. **语义感知状态缓存（Semantic-Aware State Caching）**：针对 Agent 工作负载频繁编辑上下文（删除 tool output、thinking segment）的问题，FreeToken 在**特殊 token 边界**（如 `<tool_call>`、`<thinking>`）锚定**循环状态（recurrent state）检查点**。当上下文被编辑时，只需从最近的存活锚点重新计算新后缀，避免了整段长上下文的重复预填充。
+1. **带宽自适应执行（Bandwidth-Adaptive Execution）**：不再"全量 offload 到 GPU"或"全量在 CPU 上算"，而是在每个 decode 步骤中，根据实时测量的 **PCIe 带宽** 和 **CPU 专家处理带宽** ，动态计算最优的 miss 专家分割比例 ，将部分 miss 专家通过 PCIe 加载到显存，其余直接在 CPU 上就地计算，两者并发执行，最大化利用CPU、GPU、PCIe 带宽资源。
+2. **语义感知状态缓存（Semantic-Aware State Caching）**：针对 Agent 工作中频繁编辑上下文（删除 tool output、thinking segment）的问题，FreeToken 在**特殊 token 边界**（如 `<tool_call>`、`<thinking>`）保存**循环状态（recurrent state）**作为锚点。当上下文被编辑时，只需从最近的存活锚点重新计算新后缀，避免了整段长上下文的重复预填充。
 3. **弹性边缘资源管理（Elastic Edge Resource Management）**：消费级 GPU 的 VRAM 被桌面合成器、浏览器等共享，可用预算动态变化。FreeToken 允许在运行时**无需重启引擎**即可调整 GPU 专家缓存和 KV 缓存的大小比例，并实现**快速冷启动**（直接加载 FTW 格式权重，跳过 GPU warm-up）。
 
 ### **启发**
@@ -28,7 +28,9 @@ FreeToken 是一个**边缘原生的 MoE（混合专家）模型推理系统**�
 
 ## 1 Introduction
 
-**开源 MoE 模型的能力在快速逼近闭源 SOTA，但运行它们的硬件门槛（数据中心级 GPU 集群）并未降低**。FreeToken 的突破点在于：它不把"100M 台消费级 GPU 机器"视为硬件问题，而视为**系统软件缺失问题**。它提出将个人机器视为"统一弹性推理平台"，通过软件栈的端到端协同设计（模型布局、专家驻留、CPU-GPU 执行、状态复用、运行时内存管理）来填补这一鸿沟。
+**开源 MoE 模型的能力在快速逼近闭源 SOTA，但运行它们的硬件门槛（数据中心级 GPU 集群）并未降低**。
+
+FreeToken 的突破点在于：它把在消费级 GPU 机器上实现 MoE模型推理视为**系统软件缺失问题**。它提出将个人机器视为"统一弹性推理平台"，通过软件栈的端到端协同设计（模型布局、专家驻留、CPU-GPU 执行、状态复用、运行时内存管理）来填补这一鸿沟。
 
 论文从三个技术方面来讨论的当前端侧推理系统(llama.cpp，kTransformers，Ollama 等)对于 MoE 部署的存在的技术问题：
 
@@ -40,12 +42,16 @@ FreeToken 是一个**边缘原生的 MoE（混合专家）模型推理系统**�
 FreeToken 提出的解决方案：
 
 1. **Bandwidth-adaptive execution**: 将边缘设备有限的带宽瓶颈转化为运行时的调度信号；在 Prefill 阶段通过双缓冲区机制，交替加载当前专家网络参数和下一层专家网络参数，通过计算来掩盖参数加载的延迟。Decoding 阶段通过 PCIe 的带宽，来调整专家网络加载到 GPU 中运算与停留在内存中交给 CPU 运算的比例。
-2. **Semantic-aware caching**: 在 Prefill 阶段通过语义上的标签位置来缓存 KV cache 解决 Agent 重写导致的 fix-Windows-size attention 模块的缓存失效；在 Decoding 阶段，基于**相邻token专家路由的局部性**，使用 LRU 策略来调度专家网络。
+2. **Semantic-aware caching**: 在 Prefill 阶段通过语义上的标签位置来缓存 KV cache 解决 Agent 重写导致的循环模块的缓存失效；在 Decoding 阶段，基于**相邻token专家路由的局部性**，使用 LRU 策略来调度专家网络。
 3. **Elastic edge resource management:**  为了适配消费级设备的使用场景，在不重启的推理框架的情况下，动态的调整推理所需要的显存资源。
 
 
 
 ## 2 Challenges in Edge MoE Serving
+
+本章节从 Prefill、Decoding 和 资源多样性 这三个具体方面来分析边缘侧设备 MoE 推理的技术挑战。
+
+ 
 
 ### 2.1 Challenges in the Prefill Stage: Transfer and Recomputation Costs
 
@@ -64,7 +70,7 @@ Decoding 阶段的瓶颈归因于三个递进问题：
 
 1. **静态专家放置几乎总是 miss**：llama.cpp 在 load 时固定 tensor 位置，KTransformers 在 prefill 时决定"hot expert"，但路由随每个 token、每个工作负载变化。冻结的 placement 只能覆盖很小一部分 routed traffic，多数专家最终落到 CPU 上执行，GPU 和 PCIe 闲置。
 2. **消费级 CPU 带宽无法独立支撑 decode**：双通道 DDR4 (~50 GB/s) 或 DDR5 (~80-90 GB/s) 的带宽远低于 GPU 显存带宽（RTX 4090/5090 为 1-1.8 TB/s）。CPU-only 路径的 decode 速度被 DRAM 带宽封顶，与核心数无关。
-3. **最优工作划分是硬件特定的**：miss 专家可以通过 PCIe 传到 GPU 执行，也可以在 CPU 就地执行。两种方式没有绝对优劣：PCIe-only 方案在 host 带宽充裕时浪费 CPU 算力，CPU-only 方案在 PCIe 带宽充裕时浪费未来 cache hit 的机会。最优比例依赖于具体硬件的 和 实测值。
+3. **最优工作划分是硬件特定的**：miss 专家可以通过 PCIe 传到 GPU 执行，也可以在 CPU 就地执行。两种方式没有绝对优劣：PCIe-only 方案在 host 带宽充裕时浪费 CPU 算力，CPU-only 方案在 PCIe 带宽充裕时浪费未来 cache hit 的机会。最优比例依赖于具体硬件的 PCIe 带宽和其实测值。
 
 
 
@@ -101,7 +107,7 @@ Decoding 阶段的瓶颈归因于三个递进问题：
    - $\mathcal{F}$：通过 PCIe 填入 GPU cache，然后在 GPU 上执行（大小 q）
    - $\mathcal{C}$：直接在 CPU 上就地执行（大小 m - q）
 
-   两个分支**并发执行**。设 $B_P$ 为实测 PCIe 专家传输带宽，$B_H$ PCIe 的总带宽，则留给 CPU 处理 miss experts 的 PCIe 带宽为：
+   两个分支**并发执行**。设 $B_P$ 为实测 PCIe 专家传输带宽，$B_H$ PCIe 的总带宽，则留给 CPU 处理 miss 专家的 PCIe 带宽为：
    $$
    B_R = \max(B_H - B_P, 0)
    $$
@@ -111,7 +117,7 @@ Decoding 阶段的瓶颈归因于三个递进问题：
    $$
    T_{\text{fill}}(q) \approx \frac{q \cdot S}{B_P}, \quad T_{\text{cpu}}(m-q) \approx \frac{(m-q) \cdot S}{B_H - B_P}
    $$
-   因为计算时长由最慢的那个决定，所以应该平衡两分支，可得最优分割比：（平衡的意思就是 $\frac{T_{fill}}{T_{cpu}} = 1$）
+   因为计算时长由最慢的那个分支决定，所以应该平衡两分支，得到最优分割比：（平衡的意思就是 $\frac{T_{fill}}{T_{cpu}} = 1$）
    $$
    q^* \approx m \cdot \frac{B_P}{B_H}
    $$
@@ -203,6 +209,8 @@ Figure 3 展示了端到端结果：
 
 ### 5.3 Breakdown and Cross-Hardware Analysis
 
+![image-20260905190511005](/fig4.png)
+
 从三方面分析验证 FreeToken 机制的有效性和通用性：
 
 1. **Pipelined Prefill（Figure 4a）**：
@@ -216,10 +224,6 @@ Figure 3 展示了端到端结果：
    - 两个 5090 系统（服务器 vs 桌面）的对比：相同 GPU，但 host 从多通道服务器切换到双通道消费级桌面，FreeToken 仅损失 4% decode 吞吐量，而 llama.cpp 损失 20%（因为其 CPU-resident 专家在双通道 DDR5 上带宽受限）。
    - RTX 4060 笔记本（8GB, PCIe x8）：FreeToken (NVFP4) 跑出 39.3 tok/s，是 RTX 4090 的 92%，且超过 Codex 生产 median（33 tok/s）。
    - GLM-5.2（753B）在 RTX PRO 6000 上：FreeToken 14.9 tok/s vs llama.cpp 7.3 tok/s（2.0×），KTransformers 因 host memory 不足（需要 753GB-1.5TB 但只有 512GB）无法运行。
-
-![image-20260905190511005](/fig4.png)
-
-
 
 ![image-20260905190539921](/fig5.png)
 
