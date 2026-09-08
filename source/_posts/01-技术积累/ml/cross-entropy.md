@@ -3,7 +3,7 @@ title: "机器学习中的交叉熵"
 date: 2020-09-27 14:11:00 +0800
 tags: [machinelearning, math]
 categories: ML
-typora-root-url: ..
+typora-root-url: ../../../
 ---
 
 # 机器学习中的交叉熵
