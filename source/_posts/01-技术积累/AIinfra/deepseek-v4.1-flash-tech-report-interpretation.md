@@ -1,6 +1,6 @@
 ---
 title: DeepSeek-V4.1-Flash 技术解读：持久化 KV Cache 压到约 1/8，百万上下文 Agent 的成本拐点
-date: 2026-09-10T06:59:47.207Z
+date: 2026-09-10T15:00:47.207Z
 tags: [llm, deepseek, aiinfra]
 categories: aiinfra
 typora-root-url: ../../../
