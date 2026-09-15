@@ -1,6 +1,6 @@
 ---
 title: 【Qwen3.8-Flash-Next 端侧部署】03-NVFP4 权重与 FP8 KV Cache
-date: 2026-09-10T04:20:55.464Z
+date: 2026-09-15T17:20:55.464Z
 tags:
 ---
 
@@ -72,11 +72,9 @@ NVFP4 使用 E2M1 格式：1 个 sign bit、2 个 exponent bit 和 1 个 mantiss
 
 ## local-inference-lab 的量化方案
 
-### checkpoint 的来源和定位
+### 整体量化方案
 
-本文部署路径使用的权重来自 local-inference-lab。Mia-AiLab 的 Hugging Face 页面明确将自身标记为 mirror，并要求把 local-inference-lab 仓库作为权重来源。为了避免把镜像发布者误写成量化作者，下面将它称为“local-inference-lab 方案”；涉及具体部署仓库时，才使用“MiaAI-Lab 项目”。
-
-根据 local-inference-lab 的 `config.json` 信息、量化配置和 safetensors 中的张量。项目不只是把 routed experts 压成 NVFP4 的保守方案，而是一套覆盖范围更大的混合量化：
+local-inference-lab 的量化方案是一套的混合量化方案，每个模块采用的不同的量化方案：
 
 | 模块 | 主要格式 | 说明 |
 | --- | --- | --- |
