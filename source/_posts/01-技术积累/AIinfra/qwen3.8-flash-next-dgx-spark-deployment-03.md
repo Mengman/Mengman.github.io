@@ -62,14 +62,6 @@ NVFP4 使用 E2M1 格式：1 个 sign bit、2 个 exponent bit 和 1 个 mantiss
 
 所以 NVFP4 相比 BF16 的实际容量收益接近 3.5 倍，而不是忽略 scale 后得到的整四倍。完整 checkpoint 还包含索引、norm、router、scale 以及其他精度的参数，文件体积不能直接用总参数量乘 4 bit 得到。
 
-## “NVFP4 checkpoint”仍然可能是混合量化
-
-项目使用的 checkpoint 通过配置为不同模块声明不同量化算法。主模型路径中既有 NVFP4 数据，也有 MXFP8 线性层；PLE 则使用上一篇介绍的 NVFP4 packed row。部署代码必须根据模块配置选择正确的 quant method，不能只根据模型目录名全局决定。
-
-这种混合方式有实际原因。不同权重形状和算子对低精度内核的支持程度不同，embedding lookup、普通 linear 和 fused MoE 也不是同一种计算。强行把所有张量塞进一个内核路径，往往会在加载或第一次执行特殊形状时失败。
-
-项目的 [patch_ple_layer.py](https://github.com/MiaAI-Lab/Qwen3.8-Flash-Next-Single-DGX-Spark/blob/main/files/patch_ple_layer.py) 就专门读取 <code>ple_embedding_dtype</code>，为 NVFP4 PLE 和 FP8 PLE 选择了不同的实现。本文后面讨论的 [patch_modelopt_mxfp8.py](https://github.com/MiaAI-Lab/Qwen3.8-Flash-Next-Single-DGX-Spark/blob/main/files/patch_modelopt_mxfp8.py)，则是处理 MXFP8 linear kernel 的矩阵形状限制。
-
 ## local-inference-lab 的量化方案
 
 ### 整体量化方案
