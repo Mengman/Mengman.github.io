@@ -1,7 +1,8 @@
 ---
 title: 【Qwen3.8-Flash-Next 端侧部署】03-NVFP4 权重与 FP8 KV Cache
 date: 2026-09-15T17:20:55.464Z
-tags:
+tags: [qwen, vllm, aiinfra, dgx-spark]
+categories: aiinfra
 ---
 
 在单台 DGX Spark 的部署中，“量化”至少涉及三类不同数据：模型权重、PLE 查找表和 KV Cache。它们都是 FP4 或 FP8 类型，但量化对象、scale 粒度、读取方式和反量化位置并不相同。
